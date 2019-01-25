@@ -46,8 +46,8 @@ var scheduleFormatting = {
                 boardRecord['running_days'] = document['_source']['running_days'];
                 
             }
-            console.log(boardRecord['uid']);
-            if (!(boardRecord['uid'] in board)) {
+            
+            if (!(boardRecord['uid'] in board) && boardRecord['uid'] !== undefined) {
                 // If it's not on the board, add it
 
                 board[boardRecord['uid']] = boardRecord;
