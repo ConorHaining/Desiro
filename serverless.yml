@@ -1,0 +1,32 @@
+service: my-express-application
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: eu-west-1
+
+functions:
+
+  # app:
+  #   handler: index.handler
+  #   events:
+  #     - http: ANY /
+
+  stationArrivals:
+    handler: index.handler
+    events:
+      - http: 'GET /station/{stationCode}/arrivals'
+
+  stationDepartures:
+    handler: index.handler
+    events:
+      - http: 'GET /station/{stationCode}/departures'
+
+  trainService:
+    handler: index.handler
+    events:
+      - http: 'GET /train/{uid}/{year}/{month}/{day}'
+
+plugins:
+  - serverless-offline
