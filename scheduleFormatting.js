@@ -76,7 +76,7 @@ var scheduleFormatting = {
         let todaysIndex = new Date().getDay() - 1;
 
         if(todaysIndex < 0) {
-            todaysIndex = 7;
+            todaysIndex = 6;
         }
 
         return todaysIndex;
