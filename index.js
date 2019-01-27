@@ -196,14 +196,16 @@ app.get('/station/:stationCode/arrivals', (req, res) => {
               {
                 range: {
                   "start_date": {
-                    lte: "now"
+                    lte: now.toFormat('D'),
+                    format: "d/M/y"
                   }
                 }
               },
               {
                 range: {
                   "end_start": {
-                    gte: "now"
+                    gte: now.toFormat('D'),
+                    format: "d/M/y"
                   }
                 }
               }
@@ -228,7 +230,153 @@ app.get('/station/:stationCode/arrivals', (req, res) => {
 
 app.get('/train/:UID/:year/:month/:day', (req, res) => {
   
-  res.send(req.params);
+  let date = req.params.day + '/' + 
+                req.params.month + '/' +
+                req.params.year;
+
+  date = DateTime.fromFormat(date, 'dd/MM/yyyy');
+  const today = date.toFormat('dd/MM/yyyy');
+  const tomorrow = date.plus({days: 1}).toFormat('dd/MM/yyyy');
+  let correctSchedule;
+
+  client.search({
+    index: 'schedule',
+    body: {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "uid": req.params.UID
+              }
+            },
+            {
+              "range": {
+                "start_date": {
+                  "lte": today,
+                  "format": "d/M/y"
+                }
+              }
+            },
+            {
+              "range": {
+                "end_start": {
+                  "gte": today,
+                  "format": "d/M/y"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }).then((body) => {
+    results = body.hits.hits;
+
+    correctSchedule = scheduleFormatting.applicableSchedule(results);
+    
+    return correctSchedule;
+  }).then((correctSchedule) => {
+    
+    return client.search({
+      index: 'movement',
+      body: {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "match": {
+                  "train_uid": correctSchedule['uid']
+                }
+              },
+              {
+                "range": {
+                  "departure_timestamp": {
+                    gte: today,
+                    lte: tomorrow,
+                    format: "d/M/y"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    });
+
+  }).then((body) => {
+    results = body.hits.hits
+
+    if (results.length > 0) {
+      let trainID = results[0]['_source']['train_id'];
+  
+        return client.search({
+          index: 'movement',
+          body: {
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "match": {
+                      "train_id": trainID
+                    }
+                  },
+                  {
+                    "range": {
+                      "received_at": {
+                        gte: today,
+                        lte: tomorrow,
+                        format: "d/M/y"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        });
+
+    } else {
+      return null;
+    }
+
+  }).then((body) => {
+    
+    if (body !== null) {
+      results = body.hits.hits;
+
+      results.forEach((movementRecord) => {
+        let movementStanox = movementRecord['_source']['stanox']
+
+        for (let i = 0; i < correctSchedule['location_records'].length; i++) {
+          const scheduleRecord = correctSchedule['location_records'][i];
+
+          let scheduleStanox = scheduleRecord['location']['stanox'];
+
+          if(scheduleStanox == movementStanox){
+
+            let actualTimestamp = DateTime.fromMillis(movementRecord['_source']['actual_timestamp']);
+
+            if (movementRecord['_source']['event_type'] === 'ARRIVAL'){
+              correctSchedule['location_records'][i]['actual_arrival'] = actualTimestamp.toFormat('HH:mm:ss')
+
+            } else if (movementRecord['_source']['event_type'] === 'DEPARTURE') {
+              correctSchedule['location_records'][i]['actual_departure'] = actualTimestamp.toFormat('HH:mm:ss')
+
+            }
+          }
+          
+        }
+
+        
+      });
+
+    }
+
+    res.send(correctSchedule);
+
+
+  });
 
 });
 

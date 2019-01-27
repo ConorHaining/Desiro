@@ -5,7 +5,7 @@ var scheduleFormatting = {
 
         documents.forEach(document => {
             let boardRecord = {};
-
+            
             let todaysIndex = module.exports.getRunningDayIndex();
             if(document['_source']['running_days'].charAt(todaysIndex) === '1'){
                 if(options.board == "departure") {
@@ -66,6 +66,45 @@ var scheduleFormatting = {
         });
 
         return board;
+    },
+
+    applicableSchedule: (documents) => {
+        
+        let correctSchedule = undefined;
+
+        documents.forEach((document) => {
+
+            let schedule = document['_source'];
+
+            if (correctSchedule === undefined) {
+
+                correctSchedule = schedule;
+
+            } else if (correctSchedule['stp_indicator'] == 'P' && (schedule['stp_indicator'] == 'O' || schedule['stp_indicator'] == 'C')) {
+
+                correctSchedule = schedule;
+
+            } else if (correctSchedule['stp_indicator'] == 'O' && schedule['stp_indicator'] == 'C') {
+                
+                correctSchedule = null;
+
+            } 
+
+        });
+
+        for (let i = 0; i < correctSchedule['location_records'].length; i++) {
+            const locationRecord = correctSchedule['location_records'][i];
+
+            locationRecord['location'] = locationRecord['location'][0];
+            delete locationRecord['location']['_index'];
+            delete locationRecord['location']['_type'];
+            delete locationRecord['location']['_id'];
+            delete locationRecord['location']['_id'];
+            
+        }
+
+        return correctSchedule;
+        
     },
 
 
