@@ -16,203 +16,230 @@ let client = new elasticsearch.Client({
 app.get('/station/:stationCode/departures', (req, res) => {
 
   let now = DateTime.local().setLocale('en-GB');
-  console.log(now.toFormat('HH:mm:ss'));
   let later = now.plus({hours: 2});
+  let tiploc;
 
   client.search({
-    index: "tiploc",
+    index: 'tiploc',
     body: {
       "query": {
         "match": {
-          "crs": req.params.stationCode
+          "crs": req.params.stationCode.toUpperCase()
         }
       }
     }
   }).then((body) => {
-    let result = body.hits.hits;
-
-    console.log(result);
-    let tiploc = result[0]._source.code;
-
-    return tiploc;
-  }).then((tiploc) => {
     
-    client.search({
-      index: "schedule",
-      body: {
-        size: 40,
-        sort: [
-          {
-            "location_records.public_departure": {
-              order: "asc",
-              nested: {
-                path: "location_records",
-                filter: {
-                  term: {
-                    "location_records.tiploc": tiploc
+    if (body.hits.total === 1) {
+      let result = body.hits.hits;
+      tiploc = result[0]._source.code;
+
+      return client.search({
+        index: "schedule",
+        body: {
+          size: 40,
+          sort: [
+            {
+              "location_records.public_departure": {
+                order: "asc",
+                nested: {
+                  path: "location_records",
+                  filter: {
+                    term: {
+                      "location_records.tiploc": tiploc
+                    }
                   }
                 }
               }
             }
-          }
-        ],
-        query: {
-          bool:
-          {
-            must: [
-              {
-                nested: {
-                  path: "location_records",
-                  query: {
-                    bool: {
-                      must: [
-                        {
-                          range: {
-                            "location_records.public_departure": {
-                              format: "HH:mm:ss",
-                              gte: now.toFormat('HH:mm:ss'),
-                              lte: later.toFormat('HH:mm:ss')
+          ],
+          query: {
+            bool:
+            {
+              must: [
+                {
+                  nested: {
+                    path: "location_records",
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            range: {
+                              "location_records.public_departure": {
+                                format: "HH:mm:ss",
+                                gte: now.toFormat('HH:mm:ss'),
+                                lte: later.toFormat('HH:mm:ss')
+                              }
+                            }
+                          },
+                          {
+                            term: {
+                              "location_records.tiploc": tiploc
                             }
                           }
-                        },
-                        {
-                          term: {
-                            "location_records.tiploc": tiploc
-                          }
-                        }
-                      ]
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  range: {
+                    "start_date": {
+                      lte: now.toFormat('dd/MM/yyyy'),
+                      format: "d/M/y"
+                    }
+                  }
+                },
+                {
+                  range: {
+                    "end_start": {
+                      gte: now.toFormat('dd/MM/yyyy'),
+                      format: "d/M/y"
                     }
                   }
                 }
-              },
-              {
-                range: {
-                  "start_date": {
-                    lte: now.toFormat('dd/MM/yyyy'),
-                    format: "d/M/y"
-                  }
-                }
-              },
-              {
-                range: {
-                  "end_start": {
-                    gte: now.toFormat('dd/MM/yyyy'),
-                    format: "d/M/y"
-                  }
-                }
-              }
-            ]
+              ]
+            }
           }
         }
-      }
-    }).then((body) => {
+      });
+
+    } else {
+
+      return null;
+
+    }
+
+
+  }).then((body) => {
+
+    if (body !== null) {
       let results = body.hits.hits;
       let board = scheduleFormatting.formatBoard(results, {board: "departure", tiploc: tiploc});
       res.send(board);
-    })
-    
+    } else {
+      res.status(404).send({'message': `Station ${req.params.stationCode} not found`});
+    }
 
+  }).catch((err) => {
+    console.log(err);
+    res.send(500).send({'message': '¯\_(ツ)_/¯ Unknown error'});
   });
+  
 
 });
 
 app.get('/station/:stationCode/arrivals', (req, res) => {
 
   let now = DateTime.local().setLocale('en-GB');
-  console.log(now.toFormat('HH:mm:ss'));
   let later = now.plus({hours: 2});
+  let tiploc;
 
   client.search({
-    index: "tiploc",
+    index: 'tiploc',
     body: {
       "query": {
         "match": {
-          "crs": req.params.stationCode
+          "crs": req.params.stationCode.toUpperCase()
         }
       }
     }
   }).then((body) => {
-    let result = body.hits.hits;
-    let tiploc = result[0]._source.code;
-
-    return tiploc;
-  }).then((tiploc) => {
     
-    client.search({
-      index: "schedule",
-      body: {
-        size: 40,
-        sort: [
-          {
-            "location_records.public_arrival": {
-              order: "asc",
-              nested: {
-                path: "location_records",
-                filter: {
-                  term: {
-                    "location_records.tiploc": tiploc
+    if (body.hits.total === 1) {
+      let result = body.hits.hits;
+      tiploc = result[0]._source.code;
+
+      return client.search({
+        index: "schedule",
+        body: {
+          size: 40,
+          sort: [
+            {
+              "location_records.public_arrival": {
+                order: "asc",
+                nested: {
+                  path: "location_records",
+                  filter: {
+                    term: {
+                      "location_records.tiploc": tiploc
+                    }
                   }
                 }
               }
             }
-          }
-        ],
-        query: {
-          bool:
-          {
-            must: [
-              {
-                nested: {
-                  path: "location_records",
-                  query: {
-                    bool: {
-                      must: [
-                        {
-                          range: {
-                            "location_records.public_arrival": {
-                              format: "HH:mm:ss",
-                              gte: now.toFormat('HH:mm:ss'),
-                              lte: later.toFormat('HH:mm:ss')
+          ],
+          query: {
+            bool:
+            {
+              must: [
+                {
+                  nested: {
+                    path: "location_records",
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            range: {
+                              "location_records.public_arrival": {
+                                format: "HH:mm:ss",
+                                gte: now.toFormat('HH:mm:ss'),
+                                lte: later.toFormat('HH:mm:ss')
+                              }
+                            }
+                          },
+                          {
+                            term: {
+                              "location_records.tiploc": tiploc
                             }
                           }
-                        },
-                        {
-                          term: {
-                            "location_records.tiploc": tiploc
-                          }
-                        }
-                      ]
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  range: {
+                    "start_date": {
+                      lte: now.toFormat('dd/MM/yyyy'),
+                      format: "d/M/y"
+                    }
+                  }
+                },
+                {
+                  range: {
+                    "end_start": {
+                      gte: now.toFormat('dd/MM/yyyy'),
+                      format: "d/M/y"
                     }
                   }
                 }
-              },
-              {
-                range: {
-                  "start_date": {
-                    lte: now.toFormat('dd/MM/yyyy'),
-                    format: "d/M/y"
-                  }
-                }
-              },
-              {
-                range: {
-                  "end_start": {
-                    gte: now.toFormat('dd/MM/yyyy'),
-                    format: "d/M/y"
-                  }
-                }
-              }
-            ]
+              ]
+            }
           }
         }
-      }
-    }).then((body) => {
+      });
+
+    } else {
+
+      return null;
+
+    }
+
+
+  }).then((body) => {
+
+    if (body !== null) {
       let results = body.hits.hits;
       let board = scheduleFormatting.formatBoard(results, {board: "arrival", tiploc: tiploc});
       res.send(board);
-    })
-    
+    } else {
+      res.status(404).send({'message': `Station ${req.params.stationCode} not found`});
+    }
 
+  }).catch((err) => {
+    console.log(err);
+    res.send(500).send({'message': '¯\_(ツ)_/¯ Unknown error'});
   });
 
 });
