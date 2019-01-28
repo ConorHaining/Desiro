@@ -11,12 +11,12 @@ var scheduleFormatting = {
                 if(options.board == "departure") {
                 
                     let lastLocationRecord = document['_source']['location_records'][document['_source']['location_records'].length - 1];
-                    boardRecord['destination'] = lastLocationRecord['location'][0]['name'];
+                    boardRecord['destination'] = module.exports.properCase(lastLocationRecord['location'][0]['name']);
     
                 } else {
     
                     let firstLocationRecord = document['_source']['location_records'][0];
-                    boardRecord['origin'] = firstLocationRecord['location'][0]['name'];
+                    boardRecord['origin'] = module.exports.properCase(firstLocationRecord['location'][0]['name']);
     
                 }
     
@@ -41,9 +41,7 @@ var scheduleFormatting = {
                 }
 
                 boardRecord['uid'] = document['_source']['uid'];
-                boardRecord['stp'] = document['_source']['stp_indicator'];
-                boardRecord['operator'] = document['_source']['atoc_code'];
-                boardRecord['running_days'] = document['_source']['running_days'];
+                boardRecord['operator'] = module.exports.getOperatorName(document['_source']['atoc_code']);
                 
             }
             
@@ -120,6 +118,113 @@ var scheduleFormatting = {
 
         return todaysIndex;
 
+    },
+
+    getOperatorName: (atocCode) => {
+
+        switch (atocCode) {
+            case 'AR':
+                return 'Balfour Beatty Rail Ltd.';
+            case 'NT':
+                return 'Northern';
+            case 'AW':
+                return 'Transport for Wales';
+            case 'CC':
+                return 'c2c';
+            case 'CS':
+                return 'Caledonian Sleeper';
+            case 'CH':
+                return 'Chiltern Railway';
+            case 'XC':
+                return 'CrossCountry';
+            case 'ZZ':
+                return 'Devon and Cornwall Railways';
+            case 'EM':
+                return 'East Midlands Trains';
+            case 'ES':
+                return 'Eurostar';
+            case 'FC':
+                return 'First Capital Connect (defunct)';
+            case 'HT':
+                return 'First Hull Trains';
+            case 'GX':
+                return 'Gatwick Express';
+            case 'ZZ':
+                return 'GB Railfreight';
+            case 'GN':
+                return 'Great Northern';
+            case 'TL':
+                return 'Thameslink';
+            case 'GC':
+                return 'Grand Central';
+            case 'LN':
+                return 'Great North Western Railway';
+            case 'GW':
+                return 'Great Western Railway';
+            case 'LE':
+                return 'Greater Anglia';
+            case 'HC':
+                return 'Heathrow Connect';
+            case 'HX':
+                return 'Heathrow Express';
+            case 'IL':
+                return 'Island Lines';
+            case 'LS':
+                return 'Locomotive Services';
+            case 'LM':
+                return 'London Midland';
+            case 'LO':
+                return 'London Overground';
+            case 'LT':
+                return 'LUL Bakerloo Line';
+            case 'LT':
+                return 'LUL District Line – Richmond';
+            case 'LT':
+                return 'LUL District Line – Wimbledon';
+            case 'ME':
+                return 'Merseyrail';
+            case 'LR':
+                return 'Network Rail (On-Track Machines)';
+            case 'TW':
+                return 'Nexus (Tyne & Wear Metro)';
+            case 'NY':
+                return 'North Yorkshire Moors Railway';
+            case 'SR':
+                return 'ScotRail';
+            case 'SW':
+                return 'South Western Railway';
+            case 'SJ':
+                return 'South Yorkshire Supertram';
+            case 'SE':
+                return 'Southeastern';
+            case 'SN':
+                return 'Southern';
+            case 'SP':
+                return 'Swanage Railway';
+            case 'XR':
+                return 'TfL Rail';
+            case 'TP':
+                return 'TransPennine Express';
+            case 'VT':
+                return 'Virgin Trains';
+            case 'GR':
+                return 'London North Eastern Railway';
+            case 'WR':
+                return 'West Coast Railway Co.';
+        
+            default:
+                return 'Unknown Operator';
+        }
+
+    },
+
+    properCase: (str) => {
+        return str.replace(
+            /\w\S*/g,
+            function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
     }
 }
 
