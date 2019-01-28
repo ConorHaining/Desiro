@@ -6,7 +6,7 @@ const { DateTime } = require("luxon");
 const scheduleFormatting = require('./scheduleFormatting.js');
 
 let client = new elasticsearch.Client({
-  host: process.env.esHost,
+  host: process.env.esHost || 'http://localhost:9200',
 });
 
 
