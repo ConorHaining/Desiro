@@ -6,28 +6,55 @@ provider:
   runtime: nodejs8.10
   stage: dev
   region: eu-west-1
+  profile: default
+  
+  vpc:
+    securityGroupIds:
+      - sg-0ded318cb0545e951
+    subnetIds:
+      - subnet-1c0fd146
+      - subnet-1c0fd146
+      - subnet-1c0fd146
+
+  apiKeys:
+    - Sprinter
 
 functions:
-
-  # app:
-  #   handler: index.handler
-  #   events:
-  #     - http: ANY /
 
   stationArrivals:
     handler: index.handler
     events:
-      - http: 'GET /station/{stationCode}/arrivals'
+      - http: 
+          path: /station/{stationCode}/arrivals
+          method: GET
+          private: true
 
   stationDepartures:
     handler: index.handler
     events:
-      - http: 'GET /station/{stationCode}/departures'
+      - http: 
+          path: /station/{stationCode}/departures
+          method: GET
+          private: true
 
   trainService:
     handler: index.handler
     events:
-      - http: 'GET /train/{uid}/{year}/{month}/{day}'
+      - http: 
+          path: /train/{uid}/{year}/{month}/{day}
+          method: GET
+          private: true
+
+custom:
+
+  customDomain:
+    domainName: api.planrr.app
+    certificateName:  api.planrr.app
+    basePath: ''
+    stage: ${self:provider.stage}
+    endpointType: regional
+    createRoute53Record: true
 
 plugins:
   - serverless-offline
+  - serverless-domain-manager
