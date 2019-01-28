@@ -6,7 +6,7 @@ const { DateTime } = require("luxon");
 const scheduleFormatting = require('./scheduleFormatting.js');
 
 let client = new elasticsearch.Client({
-  host: 'localhost:9200',
+  host: process.env.esHost,
 });
 
 
@@ -95,7 +95,7 @@ app.get('/station/:stationCode/departures', (req, res) => {
               {
                 range: {
                   "start_date": {
-                    lte: now.toFormat('D'),
+                    lte: now.toFormat('dd/MM/yyyy'),
                     format: "d/M/y"
                   }
                 }
@@ -103,7 +103,7 @@ app.get('/station/:stationCode/departures', (req, res) => {
               {
                 range: {
                   "end_start": {
-                    gte: now.toFormat('D'),
+                    gte: now.toFormat('dd/MM/yyyy'),
                     format: "d/M/y"
                   }
                 }
@@ -196,7 +196,7 @@ app.get('/station/:stationCode/arrivals', (req, res) => {
               {
                 range: {
                   "start_date": {
-                    lte: now.toFormat('D'),
+                    lte: now.toFormat('dd/MM/yyyy'),
                     format: "d/M/y"
                   }
                 }
@@ -204,7 +204,7 @@ app.get('/station/:stationCode/arrivals', (req, res) => {
               {
                 range: {
                   "end_start": {
-                    gte: now.toFormat('D'),
+                    gte: now.toFormat('dd/MM/yyyy'),
                     format: "d/M/y"
                   }
                 }
