@@ -9,13 +9,6 @@ let client = new elasticsearch.Client({
   host: process.env.esHost || 'http://localhost:9200',
 });
 
-
-app.get('/', function (req, res) {
-
-  res.send('Hello World!')
-
-})
-
 /*
  * Station
  */
