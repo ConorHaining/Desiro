@@ -1,7 +1,9 @@
 var scheduleFormatting = {
     formatBoard: (documents, options) => {
 
-        let board = {};
+        return new Promise((resolve, reject) => {
+
+            let board = {};
 
         documents.forEach(document => {
             let boardRecord = {};
@@ -63,7 +65,9 @@ var scheduleFormatting = {
 
         });
 
-        return board;
+        resolve(board);
+
+        });
     },
 
     applicableSchedule: (documents) => {
