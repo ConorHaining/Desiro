@@ -72,43 +72,80 @@ var scheduleFormatting = {
 
     applicableSchedule: (documents) => {
         
-        let correctSchedule = undefined;
+        return new Promise((resolve, reject) => {
+            
+            let correctSchedule = undefined;
 
-        documents.forEach((document) => {
+            documents.forEach((document) => {
 
-            let schedule = document['_source'];
+                let schedule = document['_source'];
 
-            if (correctSchedule === undefined) {
+                if (correctSchedule === undefined) {
 
-                correctSchedule = schedule;
+                    correctSchedule = schedule;
 
-            } else if (correctSchedule['stp_indicator'] == 'P' && (schedule['stp_indicator'] == 'O' || schedule['stp_indicator'] == 'C')) {
+                } else if (correctSchedule['stp_indicator'] == 'P' && (schedule['stp_indicator'] == 'O' || schedule['stp_indicator'] == 'C')) {
 
-                correctSchedule = schedule;
+                    correctSchedule = schedule;
 
-            } else if (correctSchedule['stp_indicator'] == 'O' && schedule['stp_indicator'] == 'C') {
+                } else if (correctSchedule['stp_indicator'] == 'O' && schedule['stp_indicator'] == 'C') {
+                    
+                    correctSchedule = null;
+
+                } 
+
+            });
+
+            for (let i = 0; i < correctSchedule['location_records'].length; i++) {
+                const locationRecord = correctSchedule['location_records'][i];
+
+                locationRecord['location'] = locationRecord['location'][0];
+                delete locationRecord['location']['_index'];
+                delete locationRecord['location']['_type'];
+                delete locationRecord['location']['_id'];
+                delete locationRecord['location']['_id'];
                 
-                correctSchedule = null;
+            }
 
-            } 
+            resolve(correctSchedule);
 
         });
-
-        for (let i = 0; i < correctSchedule['location_records'].length; i++) {
-            const locationRecord = correctSchedule['location_records'][i];
-
-            locationRecord['location'] = locationRecord['location'][0];
-            delete locationRecord['location']['_index'];
-            delete locationRecord['location']['_type'];
-            delete locationRecord['location']['_id'];
-            delete locationRecord['location']['_id'];
-            
-        }
-
-        return correctSchedule;
         
     },
 
+    combineMovements: (schedule, movements) => {
+
+        return new Promise((resolve, reject) => {
+            console.log(schedule);
+            if (movements !== null) {
+                movements.forEach((movementRecord) => {
+                    let movementStanox = movementRecord['_source']['stanox']
+            
+                    for (let i = 0; i < schedule['location_records'].length; i++) {
+                      const scheduleRecord = schedule['location_records'][i];
+            
+                      let scheduleStanox = scheduleRecord['location']['stanox'];
+            
+                      if(scheduleStanox == movementStanox){
+            
+                        let actualTimestamp = DateTime.fromMillis(movementRecord['_source']['actual_timestamp']);
+            
+                        if (movementRecord['_source']['event_type'] === 'ARRIVAL'){
+                          schedule['location_records'][i]['actual_arrival'] = actualTimestamp.toFormat('HH:mm:ss')
+            
+                        } else if (movementRecord['_source']['event_type'] === 'DEPARTURE') {
+                          schedule['location_records'][i]['actual_departure'] = actualTimestamp.toFormat('HH:mm:ss')
+            
+                        }
+                      }
+                      
+                    }
+                });
+            }
+
+            resolve(schedule);
+        });
+    },
 
     /**
      * Helpers

@@ -1,4 +1,4 @@
-
+const { DateTime } = require("luxon");
 
 var scheduleQuerying = (client) => {
     return {
@@ -129,12 +129,148 @@ var scheduleQuerying = (client) => {
 
         },
         
-        getSpecificTrainSchedule: (uid, year, month, day) => {
-            
+        getSpecificTrainSchedule: (uid, today) => {
+        
+          return new Promise((resolve, reject) => {
+
+            client.search({
+              index: 'schedule',
+              body: {
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "uid": uid
+                        }
+                      },
+                      {
+                        "range": {
+                          "start_date": {
+                            "lte": today,
+                            "format": "d/M/y"
+                          }
+                        }
+                      },
+                      {
+                        "range": {
+                          "end_start": {
+                            "gte": today,
+                            "format": "d/M/y"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }).then((body) => {
+
+              if(body.hits.total > 0){
+                resolve(body.hits.hits);
+              } else  {
+                reject({'message': `The train ${uid} cannot be found`, 'status': 404});
+              }
+
+            }).catch((err) => {
+
+              if (err.message === '[parse_exception] failed to parse date field [Invalid DateTime] with format [d/M/y]'){
+                reject({'message': 'Invalid date', 'status': 404});
+              } else {
+                reject({'message': 'Unknown Error', status: 500});
+              }
+
+            });
+
+          });
+          
+        },
+
+        getTrainID: (schedule, today, tomorrow) => {
+
+          return new Promise((resolve, reject) => {
+
+            client.search({
+              index: 'movement',
+              body: {
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "train_uid": schedule['uid']
+                        }
+                      },
+                      {
+                        "range": {
+                          "departure_timestamp": {
+                            gte: today,
+                            lte: tomorrow,
+                            format: "d/M/y"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }).then((body) => {
+
+              if (body.hits.total === 1) {
+                let trainID = body.hits.hits[0]['_source']['train_id']
+                resolve(trainID);
+              } else {
+                resolve(null);                
+              }
+
+
+            });
+
+          });
+
         },
         
-        getSpecificTrainMovements: (uid, year, month, day) => {
+        getSpecificTrainMovements: (trainID, today, tomorrow) => {
             
+          return new Promise((resolve, reject) => {
+            console.log(trainID);
+            client.search({
+              index: 'movement',
+              body: {
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "train_id": String(trainID)
+                        }
+                      },
+                      {
+                        "range": {
+                          "received_at": {
+                            gte: today,
+                            lte: tomorrow,
+                            format: "d/M/y"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }).then((body) => {
+              if (body.hits.total > 0) {
+                let movements = body.hits.hits;
+                resolve(movements);
+              } else {
+                resolve(null);                
+              }
+            }).catch((err) => {
+              console.log(err.message);
+            });
+
+          });
+
         }
     }
 }
