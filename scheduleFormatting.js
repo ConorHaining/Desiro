@@ -36,7 +36,7 @@ var scheduleFormatting = {
                         }
                         
                         boardRecord['platform'] = record['platform'];
-    
+                        
                         break;
                     }
                     
@@ -116,7 +116,6 @@ var scheduleFormatting = {
     combineMovements: (schedule, movements) => {
 
         return new Promise((resolve, reject) => {
-            console.log(schedule);
             if (movements !== null) {
                 movements.forEach((movementRecord) => {
                     let movementStanox = movementRecord['_source']['stanox']
@@ -145,6 +144,46 @@ var scheduleFormatting = {
 
             resolve(schedule);
         });
+    },
+
+    thinLocationRecords: (schedule) => {
+        
+        return new Promise((resolve, reject) => {
+
+            let locationRecords = schedule['location_records'];
+
+            locationRecords = locationRecords
+            .filter(locationRecord => locationRecord['public_departure'] != undefined || locationRecord['public_arrival'] != undefined)
+            .map( async (locationRecord) => {
+                locationRecord['name'] = module.exports.properCase(locationRecord['location']['description']);
+                locationRecord['crs'] = locationRecord['location']['crs'];
+                delete locationRecord['tiploc'];
+                delete locationRecord['departure'];
+                delete locationRecord['arrival'];
+                delete locationRecord['pass'];
+                delete locationRecord['line'];
+                delete locationRecord['engineering_allowance'];
+                delete locationRecord['pathing_allowance'];
+                delete locationRecord['path'];
+                delete locationRecord['location'];
+                delete locationRecord['type'];
+                
+                return locationRecord;
+            });
+
+            Promise.all(locationRecords)
+                .then((locationRecords) => {
+                    schedule['location_records'] = locationRecords;
+
+                    resolve(schedule);
+                });            
+
+        });
+        
+    },
+
+    thinSchedule: (schedule) => {
+
     },
 
     /**
