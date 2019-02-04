@@ -71,6 +71,7 @@ app.get('/train/:UID/:year/:month/:day', (req, res) => {
     .then(trainID => scheduleQuerying.getSpecificTrainMovements(trainID, today, tomorrow))
     .then(movements => scheduleFormatting.combineMovements(validSchedule, movements))
     .then(schedule => scheduleFormatting.thinLocationRecords(schedule))
+    .then(schedule => scheduleFormatting.thinSchedule(schedule))
     .then(schedule => res.send(schedule))
     .catch(err => res.status(err.status).send(err));
 

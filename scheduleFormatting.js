@@ -184,6 +184,32 @@ var scheduleFormatting = {
 
     thinSchedule: (schedule) => {
 
+        return new Promise((resolve, reject) => {
+
+            schedule['operator'] = module.exports.getOperatorName(schedule['atoc_code']);
+
+            delete schedule['traction_class'];
+            delete schedule['uic_code'];
+            delete schedule['portion_id'];
+            delete schedule['applicable_timetable'];
+            delete schedule['start_date'];
+            delete schedule['end_start'];
+            delete schedule['signalling_id'];
+            delete schedule['headcode'];
+            delete schedule['course_indicator'];
+            delete schedule['train_service_code'];
+            delete schedule['speed'];
+            delete schedule['connection_indicator'];
+            delete schedule['running_days'];
+            delete schedule['bank_holiday_running'];
+            delete schedule['service_branding'];
+            delete schedule['stp_indicator'];
+            delete schedule['atoc_code'];
+
+            resolve(schedule);
+
+        });
+
     },
 
     /**
