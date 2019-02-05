@@ -66,7 +66,7 @@ app.get('/train/:UID/:year/:month/:day', (req, res) => {
     .then(schedules => scheduleFormatting.applicableSchedule(schedules))
     .then(schedule => {
       validSchedule = schedule;
-      scheduleQuerying.getTrainID(schedule, today, tomorrow)
+      return scheduleQuerying.getTrainID(schedule, today, tomorrow)
     })
     .then(trainID => scheduleQuerying.getSpecificTrainMovements(trainID, today, tomorrow))
     .then(movements => scheduleFormatting.combineMovements(validSchedule, movements))

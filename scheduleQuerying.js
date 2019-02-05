@@ -189,7 +189,7 @@ var scheduleQuerying = (client) => {
         getTrainID: (schedule, today, tomorrow) => {
 
           return new Promise((resolve, reject) => {
-
+            
             client.search({
               index: 'movement',
               body: {
@@ -203,9 +203,9 @@ var scheduleQuerying = (client) => {
                       },
                       {
                         "range": {
-                          "departure_timestamp": {
+                          "creation_timestamp": {
                             gte: today,
-                            lte: tomorrow,
+                            lt: tomorrow,
                             format: "d/M/y"
                           }
                         }
@@ -215,9 +215,8 @@ var scheduleQuerying = (client) => {
                 }
               }
             }).then((body) => {
-
               if (body.hits.total === 1) {
-                let trainID = body.hits.hits[0]['_source']['train_id']
+                let trainID = body.hits.hits[0]['_source']['train_id'];
                 resolve(trainID);
               } else {
                 resolve(null);                
@@ -231,30 +230,15 @@ var scheduleQuerying = (client) => {
         },
         
         getSpecificTrainMovements: (trainID, today, tomorrow) => {
-            
+
           return new Promise((resolve, reject) => {
-            console.log(trainID);
+            
             client.search({
               index: 'movement',
               body: {
                 "query": {
-                  "bool": {
-                    "must": [
-                      {
-                        "match": {
-                          "train_id": String(trainID)
-                        }
-                      },
-                      {
-                        "range": {
-                          "received_at": {
-                            gte: today,
-                            lte: tomorrow,
-                            format: "d/M/y"
-                          }
-                        }
-                      }
-                    ]
+                  "match": {
+                    "train_id": String(trainID)
                   }
                 }
               }
@@ -266,7 +250,7 @@ var scheduleQuerying = (client) => {
                 resolve(null);                
               }
             }).catch((err) => {
-              console.log(err.message);
+              reject({message: err.message, status: 500});
             });
 
           });

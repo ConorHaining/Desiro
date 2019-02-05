@@ -1,3 +1,5 @@
+const { DateTime } = require("luxon");
+
 var scheduleFormatting = {
     formatBoard: (documents, options) => {
 
@@ -116,33 +118,37 @@ var scheduleFormatting = {
     combineMovements: (schedule, movements) => {
 
         return new Promise((resolve, reject) => {
+            
             if (movements !== null) {
-                movements.forEach((movementRecord) => {
-                    let movementStanox = movementRecord['_source']['stanox']
-            
-                    for (let i = 0; i < schedule['location_records'].length; i++) {
-                      const scheduleRecord = schedule['location_records'][i];
-            
-                      let scheduleStanox = scheduleRecord['location']['stanox'];
-            
-                      if(scheduleStanox == movementStanox){
-            
-                        let actualTimestamp = DateTime.fromMillis(movementRecord['_source']['actual_timestamp']);
-            
-                        if (movementRecord['_source']['event_type'] === 'ARRIVAL'){
-                          schedule['location_records'][i]['actual_arrival'] = actualTimestamp.toFormat('HH:mm:ss')
-            
-                        } else if (movementRecord['_source']['event_type'] === 'DEPARTURE') {
-                          schedule['location_records'][i]['actual_departure'] = actualTimestamp.toFormat('HH:mm:ss')
-            
-                        }
-                      }
-                      
+
+                for (let i = 0; i < movements.length; i++) {
+                    const movement = movements[i];
+                    let movementStanox = movement['_source']['stanox'];
+
+                    if(movement['_source']['message_type'] === '0001') {
+                        continue;
                     }
-                });
+
+                    for (let j = 0; j < schedule['location_records'].length; j++) {
+                        const locationRecord = schedule['location_records'][j];
+                        let locationRecordStanox = locationRecord['location']['stanox'];
+                        if (movementStanox == locationRecordStanox) {
+                            let actualTimestamp = DateTime.fromMillis(movement['_source']['actual_timestamp']);
+
+                            if (movement['_source']['event_type'] === 'ARRIVAL'){
+                                locationRecord['actual_arrival'] = actualTimestamp.toFormat('HH:mm:ss');
+                
+                            } else if (movement['_source']['event_type'] === 'DEPARTURE') {
+                                locationRecord['actual_departure'] = actualTimestamp.toFormat('HH:mm:ss');
+                            }
+                            
+                        }
+                    }
+                }
             }
 
             resolve(schedule);
+
         });
     },
 
@@ -155,7 +161,7 @@ var scheduleFormatting = {
             locationRecords = locationRecords
             .filter(locationRecord => locationRecord['public_departure'] != undefined || locationRecord['public_arrival'] != undefined)
             .map( async (locationRecord) => {
-                locationRecord['name'] = module.exports.properCase(locationRecord['location']['description']);
+                locationRecord['name'] = module.exports.properCase(locationRecord['location']['name']);
                 locationRecord['crs'] = locationRecord['location']['crs'];
                 delete locationRecord['tiploc'];
                 delete locationRecord['departure'];
