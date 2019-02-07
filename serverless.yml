@@ -28,6 +28,22 @@ functions:
           path: /station/{stationCode}/arrivals
           method: GET
           private: true
+          request:
+            parameters:
+              paths:
+                stationCode: true
+      - http: 
+          path: /station/{stationCode}/arrivals/{year}/{month}/{day}/{time}
+          method: GET
+          private: true
+          request:
+            parameters:
+              paths:
+                stationCode: true
+                year: false
+                month: false
+                day: false
+                time: false
 
   stationDepartures:
     handler: index.handler
@@ -36,6 +52,22 @@ functions:
           path: /station/{stationCode}/departures
           method: GET
           private: true
+          request:
+            parameters:
+              paths:
+                stationCode: true
+      - http: 
+          path: /station/{stationCode}/departures/{year}/{month}/{day}/{time}
+          method: GET
+          private: true
+          request:
+            parameters:
+              paths:
+                stationCode: true
+                year: true
+                month: true
+                day: true
+                time: true
 
   trainService:
     handler: index.handler
