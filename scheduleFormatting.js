@@ -218,6 +218,23 @@ var scheduleFormatting = {
 
     },
 
+    formatStationList: (list) => {
+
+        return new Promise((resolve, reject) => {
+
+            list = list.map((item) => {
+                let record = {};
+                record['name'] = module.exports.properCase(item['_source']['name']);
+                record['crs'] = item['_source']['crs'];
+                return record;
+            });
+            
+            resolve(list);
+            
+        });
+
+    },
+
     /**
      * Helpers
      */

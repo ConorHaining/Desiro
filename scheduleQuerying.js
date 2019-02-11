@@ -255,6 +255,39 @@ var scheduleQuerying = (client) => {
 
           });
 
+        },
+
+        getStationsList: () => {
+
+          return new Promise((resolve, reject) => {
+            
+            client.search({
+              index: 'tiploc',
+              body: {
+                "size": 3000,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "exists": {
+                          "field": "crs"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "field": "description"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }).then((body) => {
+              resolve(body.hits.hits);
+            })
+
+          });
+
         }
     }
 }

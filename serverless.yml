@@ -69,6 +69,14 @@ functions:
                 day: true
                 time: true
 
+  stationList:
+    handler: index.handler
+    events:
+      - http: 
+          path: /station/list
+          method: GET
+          private: true
+
   trainService:
     handler: index.handler
     events:

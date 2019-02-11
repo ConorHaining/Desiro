@@ -81,6 +81,19 @@ app.get(
 
 });
 
+app.get(
+  '/station/list'
+  , (req, res) => {
+    
+    scheduleQuerying.getStationsList()
+      .then(list => scheduleFormatting.formatStationList(list))
+      .then((list) => {
+        console.log(list)
+        res.send(list)
+      })
+      .catch(err => res.status(err.statusCode).send(err));
+
+});
 /**
  * Train
  */
