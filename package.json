@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,8 @@
     "serverless-http": "^1.8.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "serverless-domain-manager": "^2.6.13",
-    "serverless-offline": "^3.31.3"
+    "serverless-offline": "^3.31.3",
   }
 }
