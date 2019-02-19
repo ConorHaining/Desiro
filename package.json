@@ -18,6 +18,6 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "serverless-domain-manager": "^2.6.13",
-    "serverless-offline": "^3.31.3",
+    "serverless-offline": "^3.31.3"
   }
 }
