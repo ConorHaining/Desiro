@@ -1,19 +1,34 @@
 const expect = require('chai').expect;
 
 describe('Associations', function() {
-    describe('Filter Valid Running Days', function() {
 
+    const associationFormatting = require('../src/associationFormatting.js');
+
+    describe('Filter Valid Running Days', function() {
         describe('Sundays', () =>{
+            
             beforeEach(() => {
                 Date.prototype.getDay = function() { return 0; };
             });
-        
+            
             it('should return a schedule for ******1', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '0000001'
+                };
+                
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.true;
             });
             
             it('should not return a schedule for ******0', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '1111110'
+                };
+
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.false;
             });
         });
     
@@ -23,11 +38,23 @@ describe('Associations', function() {
             });
         
             it('should return a schedule for 1******', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '1000000'
+                };
+                
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.true;
             });
             
             it('should not return a schedule for 0******', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '0111111'
+                };
+
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.false;
             });
         });
     
@@ -37,11 +64,23 @@ describe('Associations', function() {
             });
         
             it('should return a schedule for *****1*', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '0000010'
+                };
+                
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.true;
             });
             
             it('should not return a schedule for *****0*', () => {
-                expect(true).to.be.false;
+                let association = {
+                    'assoc_days': '1111101'
+                };
+
+                association = associationFormatting.filterValidRunningDays(association);
+
+                expect(association).to.be.false;
             });
         });
     
@@ -60,23 +99,108 @@ describe('Associations', function() {
          */
     
         it('should return the WTT(P) schedule if there is no VAR(O) or CAN(C)', () => {
-            expect(true).to.be.false;
+            let associations = [
+                {
+                    'stp_indicator': 'P'
+                }
+            ];
+
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'P');
         });
         
         it('should return the VAR(0) schedule if there is one present and no CAN(C) with the WTT', () => {
-            expect(true).to.be.false;
+            let associations = [
+                {
+                    'stp_indicator': 'P'
+                },
+                {
+                    'stp_indicator': 'O'
+                }
+            ];
+
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'O');
         });
     
-        it('should return the CAN(C) schedule if there is one present with the WTT', () => {
-            expect(true).to.be.false;
+        it('should return the CAN(C) schedule if there is one present with the WTT, and no VAR (O)', () => {
+            let associations = [
+                {
+                    'stp_indicator': 'P'
+                },
+                {
+                    'stp_indicator': 'C'
+                }
+            ];
+            
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'C');
+        });
+
+        it('should return the CAN(C) schedule if there is one present with the WTT, and with VAR (O)', () => {
+            let associations = [
+                {
+                    'stp_indicator': 'P'
+                },
+                {
+                    'stp_indicator': 'C'
+                },
+                {
+                    'stp_indicator': 'O'
+                },
+            ];
+            
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'C');
         });
     
         it('should return the STP(N) schedule if there is no CAN(C)', () => {
-            expect(true).to.be.false;
+            let associations = [
+                {
+                    'stp_indicator': 'N'
+                }
+            ];
+
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'N');
         });
     
         it('should return the CAN(C) schedule if there is one present with the STP', () => {
-            expect(true).to.be.false;
+            let associations = [
+                {
+                    'stp_indicator': 'N'
+                },
+                {
+                    'stp_indicator': 'C'
+                }
+            ];
+            
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'C');
+        });
+
+        it('should return correct schedule regardless of order', () => {
+            let associations = [
+                {
+                    'stp_indicator': 'C'
+                },
+                {
+                    'stp_indicator': 'O'
+                },
+                {
+                    'stp_indicator': 'P'
+                },
+            ];
+            
+            let association = associationFormatting.filterValidSTPIndicators(associations);
+
+            expect(association).to.have.property('stp_indicator', 'C');
         });
     
     });
