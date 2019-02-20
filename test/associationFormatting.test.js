@@ -206,9 +206,37 @@ describe('Associations', function() {
     });
     
     describe('Discarding Next (NP) Associations', function() {
-        it('should remove any associations which have NP category', () => {
-            expect(true).to.be.false;
+
+        it('should remove any associations which have NP (Next) category', () => {
+            let association = {
+                'category': 'NP'
+            };
+
+            association = associationFormatting.discardNextAssociations(association);
+
+            expect(association).to.be.false;
         });
+
+        it('should not remove any associations which have JJ (Join) category', () => {
+            let association = {
+                'category': 'JJ'
+            };
+
+            association = associationFormatting.discardNextAssociations(association);
+
+            expect(association).to.be.true;
+        });
+
+        it('should not remove any associations which have VV (Divide) category', () => {
+            let association = {
+                'category': 'VV'
+            };
+
+            association = associationFormatting.discardNextAssociations(association);
+
+            expect(association).to.be.true;
+        });
+
     });
 
 

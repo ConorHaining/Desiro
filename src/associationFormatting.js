@@ -49,8 +49,10 @@ module.exports = {
 
     },
 
-    discardNextAssociations: (schedules) => {
+    discardNextAssociations: (association) => {
+        let category = association['category'];
 
+        return category === 'JJ' || category === 'VV';
     },
 
     createStationBoard: (schedules, direction) => {
