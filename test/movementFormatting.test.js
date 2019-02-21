@@ -10,26 +10,47 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     { },
                     { }
                 ]
-            }
+            };
 
             schedule = movementFormatting.performHeuristics(schedule);
 
+            
             schedule['location_records'].forEach((record) => {
-                expect(record).to.have.any.keys('timetable_variation', 'timetable_variation_prediction');
-                expect(record['timetable_variation_prediction']).to.satisfy((x) => {
-                    return x === undefined || x === 0;
+                
+                expect(record['ARRIVAL']).to.satisfy((x) => {
+                    return x['timetable_variation'] == 0 || x['timetable_variation_prediction'] == 0;
                 });
+                
+                expect(record['DEPARTURE']).to.satisfy((x) => {
+                    return x['timetable_variation'] == 0 || x['timetable_variation_prediction'] == 0;
+                });
+
             });
 
         });
@@ -38,54 +59,91 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': -1
+                        'ARRIVAL' : {
+                            'timetable_variation': -1
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': -1
+                        }
                     },
                     { },
                     { }
                 ]
-            }
+            };
 
             schedule = movementFormatting.performHeuristics(schedule);
-
             schedule['location_records'].forEach((record) => {
-                expect(record).to.have.any.keys('timetable_variation', 'timetable_variation_prediction');
-                expect(record['timetable_variation_prediction']).to.satisfy((x) => {
-                    return x === undefined || x < 0;
+                expect(record['ARRIVAL']).to.satisfy((x) => {
+                    return x['timetable_variation'] <= 0 || x['timetable_variation_prediction'] <= 0;
+                });
+                
+                expect(record['DEPARTURE']).to.satisfy((x) => {
+                    return x['timetable_variation'] <= 0 || x['timetable_variation_prediction'] <= 0;
                 });
             });
+            
         });
 
         it('should infer a late schedule', () =>{
             let schedule = {
                 'location_records': [
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 1
+                        'ARRIVAL' : {
+                            'timetable_variation': 1
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 1
+                        }
                     },
                     { },
                     { }
                 ]
-            }
+            };
 
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record).to.have.any.keys('timetable_variation', 'timetable_variation_prediction');
-                expect(record['timetable_variation_prediction']).to.satisfy((x) => {
-                    return x === undefined || x > 0;
+                expect(record['ARRIVAL']).to.satisfy((x) => {
+                    return x['timetable_variation'] >= 0 || x['timetable_variation_prediction'] >= 0;
+                });
+                
+                expect(record['DEPARTURE']).to.satisfy((x) => {
+                    return x['timetable_variation'] >= 0 || x['timetable_variation_prediction'] >= 0;
                 });
             });
+
         });
 
         it('should not infer when there is no movements', () =>{
@@ -102,7 +160,8 @@ describe('Movements', function() {
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record).to.not.have.any.keys('timetable_variation', 'timetable_variation_prediction');
+                expect(record['ARRIVAL']).to.be.undefined;
+                expect(record['DEPARTURE']).to.be.undefined;
             });
         });
 
@@ -110,32 +169,62 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
                     },
                     {
-                        'timetable_variation': 0
-                    }
+                        'ARRIVAL' : {
+                            'timetable_variation': 0
+                        },
+                        'DEPARTURE' : {
+                            'timetable_variation': 0
+                        }
+                    },
                 ]
-            }
+            };
 
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record).to.have.any.keys('timetable_variation');
-                expect(record).to.not.have.any.keys('timetable_variation_prediction');
+                expect(record['ARRIVAL']).to.have.any.keys('timetable_variation');
+                expect(record['ARRIVAL']).to.not.have.any.keys('timetable_variation_prediction');
+
+                expect(record['DEPARTURE']).to.have.any.keys('timetable_variation');
+                expect(record['DEPARTURE']).to.not.have.any.keys('timetable_variation_prediction');
             });
         });
         
     });
+
+    
 
     describe('Basic Details', function() {
         
