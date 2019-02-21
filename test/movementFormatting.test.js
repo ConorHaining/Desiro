@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 describe('Movements', function() {
 
-    describe('Heuristics', function() {
+    describe('Perform heuristics', function() {
 
         const movementFormatting = require('../src/movementFormatting.js');
 
@@ -136,7 +136,7 @@ describe('Movements', function() {
         });
         
     });
-    
+
     describe('Basic Details', function() {
         
         it('should only return the most basic fields', () =>{
