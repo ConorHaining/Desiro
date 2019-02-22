@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "mocha": "^6.0.1",
     "serverless-domain-manager": "^2.6.13",
     "serverless-offline": "^3.31.3"
   }
