@@ -1,3 +1,5 @@
+const Direction = require('../data/direction.js');
+
 module.exports = {
     filterValidRunningDaysFromSchedules: (schedules) => {
 
@@ -49,7 +51,46 @@ module.exports = {
 
     },
 
-    createStationBoard: (schedules, direction) => {
+    createStationBoard: (schedules, direction, crs) => {
+
+        let board = schedules.map(schedule => {
+
+            let record = {};
+            record['operator'] = schedule['atoc_code'];
+
+            schedule['location_records'].forEach(item => {
+               if (item['location']['crs'] == crs){
+                    let last = schedule['location_records'].pop();
+                    record['platform'] = item['platform'];
+
+                    if (direction == Direction.DEPARTURES && item['DEPARTURE'] === undefined) {
+                        record['public_departure'] = item['public_departure'];
+                        record['destination'] = last['location']['name'];
+
+                    } else if (direction == Direction.DEPARTURES && item['DEPARTURE'] !== undefined) {
+                        record['public_departure'] = item['public_departure'];
+                        record['destination'] = last['location']['name'];
+                        record['predicted_departure'] = item['predicted_departure'];
+
+                    } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] === undefined) {
+                        record['public_arrival'] = item['public_arrival'];
+                        record['destination'] = last['location']['name'];
+
+                    } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] !== undefined) {
+                        record['public_arrival'] = item['public_arrival'];
+                        record['destination'] = last['location']['name'];
+                        record['predicted_arrival'] = item['predicted_arrival'];
+
+                    }
+
+               }
+            });
+
+            return record;
+
+        });
+
+        return board;
 
     },
 

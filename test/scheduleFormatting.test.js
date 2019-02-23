@@ -206,18 +206,219 @@ describe('Schedules', function() {
     });
     
     describe('Create Station Board', function() {
+        const direction = require('../data/direction.js');
+        const crs = 'ABC'
+        it('should only return the most basic fields (Departures with predictions)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        }
+                    ]
+                }
+            ];
 
-        it('should only return the most basic fields', () =>{
-            expect(true).to.be.false;
+            board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
+            
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_departure', 'public_departure']);
+            });
         });
-        
+
+        it('should only return the most basic fields (Arrivals with predictions)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        }
+                    ]
+                }
+            ];
+            
+            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+            });
+        });
+
+        it('should only return the most basic fields (Departures with no predictions)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                        }
+                    ]
+                }
+            ];
+            
+            board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
+
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'public_departure']);
+            });
+        });
+
+        it('should only return the most basic fields (Arrivals with no predictions)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                        }
+                    ]
+                }
+            ];
+            
+            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'public_arrival']);
+            });
+        });
+
+        it('should only return the most basic fields (Multiple Schedules)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        }
+                    ]
+                },
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        }
+                    ]
+                }
+            ];
+            
+            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+            });
+        });
+
+        it('should only return the most basic fields (Multiple Location Records)', () =>{
+            let schedules = [
+                {
+                    'atoc_code': null,
+                    'location_records': [
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        },
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        },
+                        {
+                            'public_arrival': null,
+                            'public_departure': null,
+                            'platform': null,
+                            'location': { 'crs': 'ABC' },
+                            'DEPARTURE': {
+                                'predicted_departure': null
+                            },
+                            'ARRIVAL': {
+                                'predicted_arrival': null
+                            }
+                        }
+                    ]
+                }
+            ];
+            
+            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+
+            board.forEach(record => {
+                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+            });
+        });
+
+
     });
-
+    
     describe('Basic Details', function() {
+        const direction = require('../data/direction.js');
         
-        it('should only return the most basic fields', () =>{
-            expect(true).to.be.false;
+        it('should only return the most basic fields (Departures)', () =>{
+            let schedules = {};
+        
+            let board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
+        
+            expect(board).to.have.all.keys('uid', 'train_status', 'train_category', 'operating_characteristics', 'train_class', 'sleeper', 'reservations', 'catering', 'operator', 'location_records');
         });
+        
 
     });
 });
