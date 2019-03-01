@@ -17,14 +17,14 @@ router.get(
         const crs = req.params.stationCode;
 
         tiplocQuerying.getTiploc(crs)
-            .then(tiploc => scheduleQuerying.getSchedulesForTiploc(tiploc, when))
-            .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules))
-            .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
-            .then(schedules => associationQuerying.getAssociationsFromSchedules(schedules))
-            .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules))
-            .then(schedules => associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
-            .then(schedules => scheduleQuerying.getAssociationSchedules(schedules))
-            .then(schedules => scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES))
+            // .then(tiploc => scheduleQuerying.getSchedulesForTiploc(tiploc, when))
+            // .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules))
+            // .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
+            // .then(schedules => associationQuerying.getAssociationsFromSchedules(schedules))
+            // .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules))
+            // .then(schedules => associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
+            // .then(schedules => scheduleQuerying.getAssociationSchedules(schedules))
+            // .then(schedules => scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES))
             .then(board => res.send(board))
             .catch(err => res.status(err.status).send(err));
 
