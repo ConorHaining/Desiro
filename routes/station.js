@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const es = require('../inc/elasticsearch.js');
 
 const tiplocQuerying = require('../src/tiplocQuerying.js');
 const scheduleQuerying = require('../src/scheduleQuerying.js');
