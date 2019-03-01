@@ -85,6 +85,37 @@ describe('Schedules', function() {
         });
     
     });
+
+    describe('Filter Valid Running Day (Multiple)', function() {
+        beforeEach(() => {
+            Date.prototype.getDay = function() { return 6; };
+        });
+
+        it('should resolve when given an array of schedules', async () => {
+            let schedules = [
+                {'running_days': '1111101'},
+                {'running_days': '0000010'},
+                {'running_days': '0000010'},
+                {'running_days': '1111101'},
+                {'running_days': '0000010'},
+            ];
+
+            let validSchedules = await scheduleFormatting.filterValidRunningDaysFromSchedules(schedules);
+            expect(validSchedules).to.be.an('array');
+            expect(validSchedules).to.have.length(3);
+        });
+        
+        it('should reject when not given an array of schedules', async () => {
+            let schedules = {};
+            
+            try {
+                await scheduleFormatting.filterValidRunningDaysFromSchedules(schedules);
+            } catch (error) {
+                expect(error).to.be.an('object');
+                expect(error).to.have.all.keys(['message', 'status', 'details']);
+            }
+        });
+    });
     
     describe('Filter STP Validity', function() {
     

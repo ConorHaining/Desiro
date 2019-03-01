@@ -2,7 +2,15 @@ const Direction = require('../data/direction.js');
 
 module.exports = {
     filterValidRunningDaysFromSchedules: (schedules) => {
-
+        return new Promise((resolve, reject) => {
+            let validSchedules = [];
+            try {
+                validSchedules = schedules.filter(element => module.exports.filterValidRunningDays(element));
+            } catch (error) {
+                reject({'message': 'Valid Schedule Filter', 'status': 500, 'details': error.message});
+            }
+            resolve(validSchedules);
+        });
     },
     
     filterValidRunningDays: (schedule) => {
@@ -13,7 +21,6 @@ module.exports = {
         }
 
         const runningDays = schedule['running_days'];
-
         return runningDays.charAt(runningDayIndex) === '1';
     },
     
