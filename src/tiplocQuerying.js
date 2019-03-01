@@ -21,6 +21,8 @@ module.exports = {
                 } else {
                     reject({'message': `Station ${crs} not found`, 'status': 404});
                 }
+            }).catch((err) => {
+                reject({'message': 'Elasticsearch Error', 'status': 500, 'details': err.toString()});
             });
         });
     }
