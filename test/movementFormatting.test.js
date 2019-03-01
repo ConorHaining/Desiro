@@ -444,12 +444,12 @@ describe('Movements', function() {
 
     });
 
-    describe('Basic Details', function() {
+    // describe('Basic Details', function() {
         
-        it('should only return the most basic fields', () =>{
-            expect(true).to.be.false;
-        });
+    //     it('should only return the most basic fields', () =>{
+    //         expect(true).to.be.false;
+    //     });
 
-    });
+    // });
 
 });

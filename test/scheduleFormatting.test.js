@@ -408,17 +408,17 @@ describe('Schedules', function() {
 
     });
     
-    describe('Basic Details', function() {
-        const direction = require('../data/direction.js');
+    // describe('Basic Details', function() {
+    //     const direction = require('../data/direction.js');
         
-        it('should only return the most basic fields (Departures)', () =>{
-            let schedules = {};
+    //     it('should only return the most basic fields (Departures)', () =>{
+    //         let schedules = {};
         
-            let board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
+    //         let board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
         
-            expect(board).to.have.all.keys('uid', 'train_status', 'train_category', 'operating_characteristics', 'train_class', 'sleeper', 'reservations', 'catering', 'operator', 'location_records');
-        });
+    //         expect(board).to.have.all.keys('uid', 'train_status', 'train_category', 'operating_characteristics', 'train_class', 'sleeper', 'reservations', 'catering', 'operator', 'location_records');
+    //     });
         
 
-    });
+    // });
 });
