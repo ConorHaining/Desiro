@@ -76,46 +76,49 @@ module.exports = {
     },
 
     createStationBoard: (schedules, direction, crs) => {
+        return new Promise((resolve, reject) => {
+            let board = schedules.map(schedule => {
 
-        let board = schedules.map(schedule => {
+                let record = {};
+                record['operator'] = schedule['atoc_code'];
+                record['uid'] = schedule['uid'];
+                record['category'] = schedule['train_category'];
+                
+                schedule['location_records'].forEach(item => {
+                   if (item['location'][0]['crs'] == crs){
+                        let last = schedule['location_records'].pop()['location'][0];
+                        record['platform'] = item['platform'];
+    
+                        if (direction == Direction.DEPARTURES && item['DEPARTURE'] === undefined) {
+                            record['public_departure'] = item['public_departure'].substring(0, 5);
+                            record['destination'] = last['name'];
+                            
+                        } else if (direction == Direction.DEPARTURES && item['DEPARTURE'] !== undefined) {
+                            record['public_departure'] = item['public_departure'].substring(0, 5);
+                            record['destination'] = last['name'];
+                            record['predicted_departure'] = item['DEPARTURE']['predicted_departure'].substring(0, 5);
+                            
+                        } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] === undefined) {
+                            record['public_arrival'] = item['public_arrival'].substring(0, 5);
+                            record['destination'] = last['name'];
+    
+                        } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] !== undefined) {
+                            record['public_arrival'] = item['public_arrival'].substring(0, 5);
+                            record['destination'] = last['name'];
+                            record['predicted_arrival'] = item['ARRIVAL']['predicted_arrival'].substring(0, 5);
+    
+                        }
+    
+                   }
+                });
 
-            let record = {};
-            record['operator'] = schedule['atoc_code'];
-
-            schedule['location_records'].forEach(item => {
-               if (item['location']['crs'] == crs){
-                    let last = schedule['location_records'].pop();
-                    record['platform'] = item['platform'];
-
-                    if (direction == Direction.DEPARTURES && item['DEPARTURE'] === undefined) {
-                        record['public_departure'] = item['public_departure'];
-                        record['destination'] = last['location']['name'];
-
-                    } else if (direction == Direction.DEPARTURES && item['DEPARTURE'] !== undefined) {
-                        record['public_departure'] = item['public_departure'];
-                        record['destination'] = last['location']['name'];
-                        record['predicted_departure'] = item['predicted_departure'];
-
-                    } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] === undefined) {
-                        record['public_arrival'] = item['public_arrival'];
-                        record['destination'] = last['location']['name'];
-
-                    } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] !== undefined) {
-                        record['public_arrival'] = item['public_arrival'];
-                        record['destination'] = last['location']['name'];
-                        record['predicted_arrival'] = item['predicted_arrival'];
-
-                    }
-
-               }
+                return record;
+    
             });
-
-            return record;
-
+    
+            resolve(board);
+    
         });
-
-        return board;
-
     },
 
     /**

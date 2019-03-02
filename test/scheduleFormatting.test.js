@@ -258,200 +258,200 @@ describe('Schedules', function() {
     describe('Create Station Board', function() {
         const direction = require('../data/direction.js');
         const crs = 'ABC'
-        it('should only return the most basic fields (Departures with predictions)', () =>{
+        it('should only return the most basic fields (Departures with predictions)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         }
                     ]
                 }
             ];
 
-            board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
             
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_departure', 'public_departure']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_departure', 'public_departure']);
             });
         });
 
-        it('should only return the most basic fields (Arrivals with predictions)', () =>{
+        it('should only return the most basic fields (Arrivals with predictions)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         }
                     ]
                 }
             ];
             
-            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
             });
         });
 
-        it('should only return the most basic fields (Departures with no predictions)', () =>{
+        it('should only return the most basic fields (Departures with no predictions)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                         }
                     ]
                 }
             ];
             
-            board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'public_departure']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'public_departure']);
             });
         });
 
-        it('should only return the most basic fields (Arrivals with no predictions)', () =>{
+        it('should only return the most basic fields (Arrivals with no predictions)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                         }
                     ]
                 }
             ];
             
-            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'public_arrival']);
             });
         });
 
-        it('should only return the most basic fields (Multiple Schedules)', () =>{
+        it('should only return the most basic fields (Multiple Schedules)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         }
                     ]
                 },
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         }
                     ]
                 }
             ];
             
-            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
             });
         });
 
-        it('should only return the most basic fields (Multiple Location Records)', () =>{
+        it('should only return the most basic fields (Multiple Location Records)', async () =>{
             let schedules = [
                 {
-                    'atoc_code': null,
+                    'atoc_code': "null1234",
                     'location_records': [
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         },
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         },
                         {
-                            'public_arrival': null,
-                            'public_departure': null,
-                            'platform': null,
-                            'location': { 'crs': 'ABC' },
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
                             'DEPARTURE': {
-                                'predicted_departure': null
+                                'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
-                                'predicted_arrival': null
+                                'predicted_arrival': "null1234"
                             }
                         }
                     ]
                 }
             ];
             
-            board = scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
+            board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
             });
         });
 
@@ -464,7 +464,7 @@ describe('Schedules', function() {
     //     it('should only return the most basic fields (Departures)', () =>{
     //         let schedules = {};
         
-    //         let board = scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
+    //         let board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
         
     //         expect(board).to.have.all.keys('uid', 'train_status', 'train_category', 'operating_characteristics', 'train_class', 'sleeper', 'reservations', 'catering', 'operator', 'location_records');
     //     });
