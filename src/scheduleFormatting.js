@@ -26,7 +26,24 @@ module.exports = {
     
     
     filterValidSTPIndicatorsFromSchedules: (schedules) => {
-    
+        let groupedSchedules = {};
+
+        schedules.forEach(schedule => {
+            const uid = schedule['uid'];
+            if(groupedSchedules[uid]){
+                groupedSchedules[uid].push(schedule); 
+            } else {
+                groupedSchedules[uid] = [schedule]; 
+            }
+        });
+        
+        return new Promise((resolve, reject) => {
+            let validSchedules = [];
+            validSchedules = Object.values(groupedSchedules)
+                .map(element => module.exports.filterValidSTPIndicators(element));
+            
+            resolve(validSchedules);
+        });
     },
     
     filterValidSTPIndicators: (schedules) => {

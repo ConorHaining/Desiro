@@ -235,6 +235,25 @@ describe('Schedules', function() {
         });
     
     });
+
+    describe('Filter STP Validity (Multiple)', function() {
+
+        it('should resolve with an array of valid schedules when given a mixed array of schedules', async () => {
+            let schedules = [
+                {'uid': 'A', 'stp_indicator': 'P'},
+                {'uid': 'A', 'stp_indicator': 'C'},
+                {'uid': 'B', 'stp_indicator': 'P'},
+                {'uid': 'B', 'stp_indicator': 'C'},
+                {'uid': 'B', 'stp_indicator': 'O'},
+                {'uid': 'C', 'stp_indicator': 'P'},
+                {'uid': 'D', 'stp_indicator': 'P'},
+                {'uid': 'D', 'stp_indicator': 'O'},
+            ];
+
+            let validSchedules = await scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules);
+            expect(validSchedules).to.be.length(4);
+        });
+    });
     
     describe('Create Station Board', function() {
         const direction = require('../data/direction.js');
