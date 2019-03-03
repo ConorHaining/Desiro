@@ -464,17 +464,31 @@ describe('Schedules', function() {
 
     });
     
-    // describe('Basic Details', function() {
-    //     const direction = require('../data/direction.js');
-        
-    //     it('should only return the most basic fields (Departures)', () =>{
-    //         let schedules = {};
-        
-    //         let board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES);
-        
-    //         expect(board).to.have.all.keys('uid', 'train_status', 'train_category', 'operating_characteristics', 'train_class', 'sleeper', 'reservations', 'catering', 'operator', 'location_records');
-    //     });
-        
+    describe('Proper Case', function(){
 
-    // });
+        it('should returned a proper case string from upper case string', () =>{
+            const string = 'THE NEXT STOP IS STIRLING';
+            const result = scheduleFormatting.toProperCase(string);
+            expect(result).to.equal('The Next Stop Is Stirling');
+        });
+
+        it('should return a proper case string from a lower case', () => {
+            const string = 'the next stop is stirling';
+            const result = scheduleFormatting.toProperCase(string);
+            expect(result).to.equal('The Next Stop Is Stirling');
+        });
+
+        it('should return a proper case string from a mixed case string', () => {
+            const string = 'thE NeXT STop iS sTiRLINg';
+            const result = scheduleFormatting.toProperCase(string);
+            expect(result).to.equal('The Next Stop Is Stirling');
+        });
+
+        it('should return a proper case string from a proper case string', () => {
+            const string = 'The Next Stop Is Stirling';
+            const result = scheduleFormatting.toProperCase(string);
+            expect(result).to.equal('The Next Stop Is Stirling');
+        });
+
+    });
 });
