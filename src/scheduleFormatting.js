@@ -88,23 +88,22 @@ module.exports = {
                    if (item['location'][0]['crs'] == crs){
                         let last = schedule['location_records'].pop()['location'][0];
                         record['platform'] = item['platform'];
-    
                         if (direction == Direction.DEPARTURES && item['DEPARTURE'] === undefined) {
                             record['public_departure'] = item['public_departure'].substring(0, 5);
-                            record['destination'] = last['name'];
+                            record['destination'] = module.exports.toProperCase(last['name']);
                             
                         } else if (direction == Direction.DEPARTURES && item['DEPARTURE'] !== undefined) {
                             record['public_departure'] = item['public_departure'].substring(0, 5);
-                            record['destination'] = last['name'];
+                            record['destination'] = module.exports.toProperCase(last['name']);
                             record['predicted_departure'] = item['DEPARTURE']['predicted_departure'].substring(0, 5);
                             
                         } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] === undefined) {
                             record['public_arrival'] = item['public_arrival'].substring(0, 5);
-                            record['destination'] = last['name'];
+                            record['origin'] = module.exports.toProperCase(last['name']);
     
                         } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] !== undefined) {
                             record['public_arrival'] = item['public_arrival'].substring(0, 5);
-                            record['destination'] = last['name'];
+                            record['origin'] = module.exports.toProperCase(last['name']);
                             record['predicted_arrival'] = item['ARRIVAL']['predicted_arrival'].substring(0, 5);
     
                         }
@@ -120,8 +119,17 @@ module.exports = {
     
         });
     },
-
+    
     /**
      * Helpers
      */
+
+    toProperCase: (string) => {
+        return string.replace(
+            /\w\S*/g,
+            function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    }
 }

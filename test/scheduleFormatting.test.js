@@ -257,8 +257,9 @@ describe('Schedules', function() {
     
     describe('Create Station Board', function() {
         const direction = require('../data/direction.js');
-        const crs = 'ABC'
+        
         it('should only return the most basic fields (Departures with predictions)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
@@ -278,25 +279,26 @@ describe('Schedules', function() {
                     ]
                 }
             ];
-
+            
             board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
             
             board.forEach(record => {
                 expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_departure', 'public_departure']);
             });
         });
-
+        
         it('should only return the most basic fields (Arrivals with predictions)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
                     'location_records': [
-                        {
-                            'public_arrival': "null1234",
-                            'public_departure': "null1234",
-                            'platform': "null1234",
-                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                    {
+                        'public_arrival': "null1234",
+                        'public_departure': "null1234",
+                        'platform': "null1234",
+                        'location': [{ 'crs': 'ABC', 'name': 'Station' }],
+                        'DEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
                             'ARRIVAL': {
@@ -308,13 +310,14 @@ describe('Schedules', function() {
             ];
             
             board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
-
+            
             board.forEach(record => {
-                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'origin', 'predicted_arrival', 'public_arrival']);
             });
         });
-
+        
         it('should only return the most basic fields (Departures with no predictions)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
@@ -330,13 +333,14 @@ describe('Schedules', function() {
             ];
             
             board = await scheduleFormatting.createStationBoard(schedules, direction.DEPARTURES, crs);
-
+            
             board.forEach(record => {
                 expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'public_departure']);
             });
         });
-
+        
         it('should only return the most basic fields (Arrivals with no predictions)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
@@ -352,13 +356,14 @@ describe('Schedules', function() {
             ];
             
             board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
-
+            
             board.forEach(record => {
-                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'origin', 'public_arrival']);
             });
         });
-
+        
         it('should only return the most basic fields (Multiple Schedules)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
@@ -397,13 +402,14 @@ describe('Schedules', function() {
             ];
             
             board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
-
+            
             board.forEach(record => {
-                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'origin', 'predicted_arrival', 'public_arrival']);
             });
         });
 
         it('should only return the most basic fields (Multiple Location Records)', async () =>{
+            const crs = 'ABC';
             let schedules = [
                 {
                     'atoc_code': "null1234",
@@ -451,7 +457,7 @@ describe('Schedules', function() {
             board = await scheduleFormatting.createStationBoard(schedules, direction.ARRIVALS, crs);
 
             board.forEach(record => {
-                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'destination', 'predicted_arrival', 'public_arrival']);
+                expect(record).to.have.all.keys(['uid', 'category', 'platform', 'operator', 'origin', 'predicted_arrival', 'public_arrival']);
             });
         });
 
