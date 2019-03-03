@@ -15,7 +15,11 @@ module.exports = {
             } else {
                 reject({'message': 'Unknown Direction', 'status': 500});
             }
-            
+
+            startTime = when.toFormat('HH:mm');
+            endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
+            date = when.toFormat('dd/LL/yyyy');
+
             let queryString = `{
                 "size": 40,
                 "sort": [
@@ -45,9 +49,9 @@ module.exports = {
                                 {
                                   "range": {
                                     "location_records.${field}": {
-                                      "format": "HH:mm:ss",
-                                      "gte": "15:00:00",
-                                      "lte": "17:00:00"
+                                      "format": "HH:mm",
+                                      "gte": "${startTime}",
+                                      "lte": "${endTime}"
                                     }
                                   }
                                 },
@@ -64,7 +68,7 @@ module.exports = {
                       {
                         "range": {
                           "start_date": {
-                            "lte": "01/03/2019",
+                            "lte": "${date}",
                             "format": "d/M/y"
                           }
                         }
@@ -72,7 +76,7 @@ module.exports = {
                       {
                         "range": {
                           "end_start": {
-                            "gte": "01/03/2019",
+                            "gte": "${date}",
                             "format": "d/M/y"
                           }
                         }
