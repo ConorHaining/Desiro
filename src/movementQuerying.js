@@ -3,51 +3,48 @@ const ES = require('../inc/elasticsearch.js');
 module.exports = {
     getTrainMovementIdFromSchedules: (schedules, when) => {
         const date = when.toFormat('dd/LL/yyyy');
-        return new Promise((resolve, reject) => {
-          
-          schedules.map(schedule => {
+
+          const results = schedules.map(async(schedule) => {
             const uid = schedule['uid'];
-            ES.search({
+
+            let esResults = await ES.search({
               index: 'movement',
-              body: {
-                  "query": {
-                    "bool": {
-                      "must": [
-                        {
-                          "match": {
-                            "train_uid": uid
-                          }
-                        },
-                        {
-                          "range": {
-                            "received_at": {
-                              "format": "dd/MM/yyyy",
-                              "gte": date,
-                              "lte": date
-                            }
+              body:{
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "train_uid": uid
+                        }
+                      },
+                      {
+                        "range": {
+                          "received_at": {
+                            "format": "dd/MM/yyyy",
+                            "gte": date,
+                            "lte": date
                           }
                         }
-                      ]
-                    }
+                      }
+                    ]
                   }
                 }
-              }).then(results => {
-                if(results.hits.total === 1){
-                    schedule['train_id'] = results.hits.hits[0]['_source']['train_id'];
-                }
-                
-                return schedule;
-              });
+              }
+            });
+
+            if(esResults['hits']['total'] === 1) {
+              schedule['train_id'] = esResults['hits']['hits'][0]['_source']['train_id'];
+            }
+
+            return schedule;
           });
-
-          resolve(schedules);
-
-        });
-
+  
+          return Promise.all(results)
+  
     },
 
-    getTrainMovementsFromSchedules: (schedules) => {
-
+    getTrainMovementsFromSchedules: (schedules, when) => {
     },
 
     getTrainMovements: (schedule) => {
