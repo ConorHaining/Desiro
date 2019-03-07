@@ -14,6 +14,8 @@ const client = new elasticsearch.Client({
 const stationRoutes = require('./routes/station.js');
 const trainRoutes = require('./routes/train.js')
 
+app.get('/', (req, res) => {res.send({'Planrr': 'Trains \'n\' stuff'}); });
+
 app.use('/station', stationRoutes);
 app.use('/train', trainRoutes);
 

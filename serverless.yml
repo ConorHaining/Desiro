@@ -20,14 +20,21 @@ provider:
     - Sprinter
 
 functions:
-
+  base:
+    handler: index.handler
+    events:
+      - http: 
+          path: /
+          method: GET
+          private: true
+          
   stationBoard:
     handler: index.handler
     events:
       - http: 
           path: /station/{stationCode}/{direction}
           method: GET
-          private: false
+          private: true
           request:
             parameters:
               paths:
@@ -36,7 +43,7 @@ functions:
       - http: 
           path: /station/{stationCode}/{direction}/{year}/{month}/{day}/{time}
           method: GET
-          private: false
+          private: true
           request:
             parameters:
               paths:
