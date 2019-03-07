@@ -88,6 +88,7 @@ module.exports = {
                 schedule['location_records'].forEach(item => {
                    if (item['location'][0]['crs'] == crs){
                         let last = schedule['location_records'].pop()['location'][0];
+                        let first = schedule['location_records'].shift()['location'][0]
                         record['platform'] = item['platform'];
                         try {
                             if (direction == Direction.DEPARTURES && item['MVTDEPARTURE'] === undefined) {
@@ -104,10 +105,10 @@ module.exports = {
                                 }
                             } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] === undefined) {
                                 record['public_arrival'] = item['public_arrival'];
-                                record['origin'] = module.exports.toProperCase(last['name']);
+                                record['origin'] = module.exports.toProperCase(first['name']);
                             } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] !== undefined) {
                                 record['public_arrival'] = item['public_arrival'];
-                                record['origin'] = module.exports.toProperCase(last['name']);
+                                record['origin'] = module.exports.toProperCase(first['name']);
                                 
                                 if(item['MVTARRIVAL']['actual_timestamp'] !== undefined){
                                     record['actual_arrival'] = DateTime.fromMillis(item['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm:ss');
