@@ -269,11 +269,11 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
-                                'predicted_departure': "null1234"
+                            'predicted_departure': "null1234",
+                            'predicted_arrival': "null1234",
+                            'MVTDEPARTURE': {
                             },
-                            'ARRIVAL': {
-                                'predicted_arrival': "null1234"
+                            'MVTARRIVAL': {
                             }
                         }
                     ]
@@ -293,15 +293,15 @@ describe('Schedules', function() {
                 {
                     'atoc_code': "null1234",
                     'location_records': [
-                    {
-                        'public_arrival': "null1234",
-                        'public_departure': "null1234",
-                        'platform': "null1234",
-                        'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                        'DEPARTURE': {
-                                'predicted_departure': "null1234"
-                            },
-                            'ARRIVAL': {
+                        {
+                            'public_arrival': "null1234",
+                            'public_departure': "null1234",
+                            'platform': "null1234",
+                            'location': [{ 'crs': 'ABC', 'name': 'Station' }],
+                            'MVTDEPARTURE': {
+                                    'predicted_departure': "null1234"
+                                },
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         }
@@ -373,10 +373,10 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                            'MVTDEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
-                            'ARRIVAL': {
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         }
@@ -390,10 +390,10 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                            'MVTDEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
-                            'ARRIVAL': {
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         }
@@ -419,10 +419,10 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                            'MVTDEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
-                            'ARRIVAL': {
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         },
@@ -431,10 +431,10 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                            'MVTDEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
-                            'ARRIVAL': {
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         },
@@ -443,10 +443,10 @@ describe('Schedules', function() {
                             'public_departure': "null1234",
                             'platform': "null1234",
                             'location': [{ 'crs': 'ABC', 'name': 'Station' }],
-                            'DEPARTURE': {
+                            'MVTDEPARTURE': {
                                 'predicted_departure': "null1234"
                             },
-                            'ARRIVAL': {
+                            'MVTARRIVAL': {
                                 'predicted_arrival': "null1234"
                             }
                         }

@@ -1,4 +1,5 @@
 const Direction = require('../data/direction.js');
+const { DateTime } = require('luxon');
 
 module.exports = {
     filterValidRunningDaysFromSchedules: (schedules) => {
@@ -88,24 +89,34 @@ module.exports = {
                    if (item['location'][0]['crs'] == crs){
                         let last = schedule['location_records'].pop()['location'][0];
                         record['platform'] = item['platform'];
-                        if (direction == Direction.DEPARTURES && item['DEPARTURE'] === undefined) {
-                            record['public_departure'] = item['public_departure'].substring(0, 5);
-                            record['destination'] = module.exports.toProperCase(last['name']);
-                            
-                        } else if (direction == Direction.DEPARTURES && item['DEPARTURE'] !== undefined) {
-                            record['public_departure'] = item['public_departure'].substring(0, 5);
-                            record['destination'] = module.exports.toProperCase(last['name']);
-                            record['predicted_departure'] = item['DEPARTURE']['predicted_departure'].substring(0, 5);
-                            
-                        } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] === undefined) {
-                            record['public_arrival'] = item['public_arrival'].substring(0, 5);
-                            record['origin'] = module.exports.toProperCase(last['name']);
-    
-                        } else if (direction == Direction.ARRIVALS && item['ARRIVAL'] !== undefined) {
-                            record['public_arrival'] = item['public_arrival'].substring(0, 5);
-                            record['origin'] = module.exports.toProperCase(last['name']);
-                            record['predicted_arrival'] = item['ARRIVAL']['predicted_arrival'].substring(0, 5);
-    
+                        try {
+                            if (direction == Direction.DEPARTURES && item['MVTDEPARTURE'] === undefined) {
+                                record['public_departure'] = item['public_departure'];
+                                record['destination'] = module.exports.toProperCase(last['name']);
+                            } else if (direction == Direction.DEPARTURES && item['MVTDEPARTURE'] !== undefined) {
+                                record['public_departure'] = item['public_departure'];
+                                record['destination'] = module.exports.toProperCase(last['name']);
+
+                                if(item['MVTDEPARTURE']['actual_timestamp'] !== undefined){
+                                    record['actual_departure'] = DateTime.fromMillis(item['MVTDEPARTURE']['actual_timestamp']).toFormat('HH:mm:ss');
+                                } else {
+                                    record['predicted_departure'] = item['predicted_departure'];
+                                }
+                            } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] === undefined) {
+                                record['public_arrival'] = item['public_arrival'];
+                                record['origin'] = module.exports.toProperCase(last['name']);
+                            } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] !== undefined) {
+                                record['public_arrival'] = item['public_arrival'];
+                                record['origin'] = module.exports.toProperCase(last['name']);
+                                
+                                if(item['MVTARRIVAL']['actual_timestamp'] !== undefined){
+                                    record['actual_arrival'] = DateTime.fromMillis(item['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm:ss');
+                                } else {
+                                    record['predicted_arrival'] = item['predicted_arrival'];
+                                }
+                            }
+                        } catch (error) {
+                            reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
                         }
     
                    }
