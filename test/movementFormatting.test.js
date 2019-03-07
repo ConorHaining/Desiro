@@ -10,26 +10,26 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTMVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
@@ -43,11 +43,11 @@ describe('Movements', function() {
             
             schedule['location_records'].forEach((record) => {
                 
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return x['timetable_variation'] == 0 || x['timetable_variation_prediction'] == 0;
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return x['timetable_variation'] == 0 || x['timetable_variation_prediction'] == 0;
                 });
 
@@ -59,26 +59,26 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': -1
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': -1
                         }
                     },
@@ -89,11 +89,11 @@ describe('Movements', function() {
 
             schedule = movementFormatting.performHeuristics(schedule);
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return x['timetable_variation'] <= 0 || x['timetable_variation_prediction'] <= 0;
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return x['timetable_variation'] <= 0 || x['timetable_variation_prediction'] <= 0;
                 });
             });
@@ -104,26 +104,26 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 1
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 1
                         }
                     },
@@ -135,11 +135,11 @@ describe('Movements', function() {
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return x['timetable_variation'] >= 0 || x['timetable_variation_prediction'] >= 0;
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return x['timetable_variation'] >= 0 || x['timetable_variation_prediction'] >= 0;
                 });
             });
@@ -160,8 +160,8 @@ describe('Movements', function() {
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.be.undefined;
-                expect(record['DEPARTURE']).to.be.undefined;
+                expect(record['MVTARRIVAL']).to.be.undefined;
+                expect(record['MVTDEPARTURE']).to.be.undefined;
             });
         });
 
@@ -169,42 +169,42 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
@@ -214,11 +214,11 @@ describe('Movements', function() {
             schedule = movementFormatting.performHeuristics(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.have.any.keys('timetable_variation');
-                expect(record['ARRIVAL']).to.not.have.any.keys('timetable_variation_prediction');
+                expect(record['MVTARRIVAL']).to.have.any.keys('timetable_variation');
+                expect(record['MVTARRIVAL']).to.not.have.any.keys('timetable_variation_prediction');
 
-                expect(record['DEPARTURE']).to.have.any.keys('timetable_variation');
-                expect(record['DEPARTURE']).to.not.have.any.keys('timetable_variation_prediction');
+                expect(record['MVTDEPARTURE']).to.have.any.keys('timetable_variation');
+                expect(record['MVTDEPARTURE']).to.not.have.any.keys('timetable_variation_prediction');
             });
         });
         
@@ -232,36 +232,36 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation_prediction': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation_prediction': 0
                         }
                     }
@@ -271,12 +271,12 @@ describe('Movements', function() {
             schedule = movementFormatting.calculatePredictedTime(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_arrival'] == '12:00')
                         || (x['timetable_variation'] != undefined);
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_departure'] == '12:01')
                         || (x['timetable_variation'] != undefined);
                 });
@@ -287,36 +287,36 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation_prediction': -1
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation_prediction': -1
                         }
                     }
@@ -326,12 +326,12 @@ describe('Movements', function() {
             schedule = movementFormatting.calculatePredictedTime(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_arrival'] == '11:59')
                         || (x['timetable_variation'] != undefined);
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_departure'] == '12:01')
                         || (x['timetable_variation'] != undefined);
                 });
@@ -342,36 +342,36 @@ describe('Movements', function() {
             let schedule = {
                 'location_records': [
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation_prediction': 1
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation_prediction': 1
                         }
                     }
@@ -381,12 +381,12 @@ describe('Movements', function() {
             schedule = movementFormatting.calculatePredictedTime(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_arrival'] == '12:01')
                         || (x['timetable_variation'] != undefined);
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return (x['timetable_variation_prediction'] != undefined && x['predicted_departure'] == '12:02')
                         || (x['timetable_variation'] != undefined);
                 });
@@ -399,30 +399,30 @@ describe('Movements', function() {
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     },
                     {
                         'arrival': '12:00',
                         'departure': '12:01',
-                        'ARRIVAL' : {
+                        'MVTARRIVAL' : {
                             'timetable_variation': 0
                         },
-                        'DEPARTURE' : {
+                        'MVTDEPARTURE' : {
                             'timetable_variation': 0
                         }
                     }
@@ -432,11 +432,11 @@ describe('Movements', function() {
             schedule = movementFormatting.calculatePredictedTime(schedule);
 
             schedule['location_records'].forEach((record) => {
-                expect(record['ARRIVAL']).to.satisfy((x) => {
+                expect(record['MVTARRIVAL']).to.satisfy((x) => {
                     return x['predicted_arrival'] === undefined;
                 });
                 
-                expect(record['DEPARTURE']).to.satisfy((x) => {
+                expect(record['MVTDEPARTURE']).to.satisfy((x) => {
                     return x['predicted_departure'] === undefined;
                 });
             });
