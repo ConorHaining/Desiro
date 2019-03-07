@@ -2,7 +2,7 @@ var { DateTime } = require('luxon');
 
 module.exports = {
     performHeuristicsFromSchedules: (schedules) => {
-
+        
         return new Promise((resolve, reject) => {
             let newSchedules;
             try {
@@ -12,9 +12,9 @@ module.exports = {
             }
             resolve(newSchedules);
         });
-
+        
     },
-
+    
     performHeuristics: (schedule) => {
         let locationRecords = schedule['location_records'];
         let previousTimetableVariationArrival = undefined;
@@ -25,8 +25,6 @@ module.exports = {
             let timetableVariationArrival = (record['MVTARRIVAL'] == undefined) ?  undefined : record['MVTARRIVAL']['timetable_variation'];
             let timetableVariationDeparture = (record['MVTDEPARTURE'] == undefined) ?  undefined : record['MVTDEPARTURE']['timetable_variation'];
 
-            // console.log(`Arrival: ${timetableVariationArrival} | Prediction ${}`);
-            // console.log(`Departure: ${} | Prediction ${}`);
 
             if (timetableVariationDeparture === undefined && previousTimetableVariationDeparture !== undefined){
                 record['MVTDEPARTURE'] = {'timetable_variation_prediction': previousTimetableVariationDeparture};
@@ -39,7 +37,6 @@ module.exports = {
             } else {
                 previousTimetableVariationArrival = timetableVariationArrival;
             }
-            // console.log(JSON.stringify(record));
             return record;
         });
 
@@ -48,27 +45,40 @@ module.exports = {
         return schedule;
     },
 
+    calculatePredictedTimeFromSchedules: (schedules) => {
+        
+        return new Promise((resolve, reject) => {
+            let newSchedules;
+            try {
+                newSchedules = schedules.map(schedule => module.exports.calculatePredictedTime(schedule));
+            } catch (error) {
+                reject({'message': 'Time Prediction Error', 'status': 500, 'details': error.message});
+            }
+            resolve(newSchedules);
+        });
+        
+    },
+
     calculatePredictedTime: (schedule) => {
         let locationRecords = schedule['location_records'];
 
         locationRecords = locationRecords.map(record => {
-            let timetableVariationArrival = record['MVTARRIVAL']['timetable_variation_prediction'];
-            let timetableVariationDeparture = record['MVTDEPARTURE']['timetable_variation_prediction'];
+            let timetableVariationArrival = (record['MVTARRIVAL'] == undefined) ?  undefined : record['MVTARRIVAL']['timetable_variation_prediction'];
+            let timetableVariationDeparture = (record['MVTDEPARTURE'] == undefined) ?  undefined : record['MVTDEPARTURE']['timetable_variation_prediction'];
 
-            if (timetableVariationArrival !== undefined) {
-                let arrivalTime = module.exports.chopUpTime(record['arrival']);
+            if (timetableVariationArrival !== undefined && record['public_arrival']) {
+                let arrivalTime = module.exports.chopUpTime(record['public_arrival']);
                 arrivalTime = DateTime.fromObject(arrivalTime);
-                
-                let predictedArrival = arrivalTime.plus({minutes: timetableVariationArrival});
-                record['MVTARRIVAL']['predicted_arrival'] = predictedArrival.toLocaleString(DateTime.TIME_24_SIMPLE);
+                let predictedArrival = arrivalTime.plus({minutes: Math.max(timetableVariationArrival)});
+                record['predicted_arrival'] = predictedArrival.toLocaleString(DateTime.TIME_24_SIMPLE);
             }
             
-            if (timetableVariationDeparture !== undefined) {
-                let departureTime = module.exports.chopUpTime(record['departure']);
+            if (timetableVariationDeparture !== undefined && record['public_departure']) {
+                let departureTime = module.exports.chopUpTime(record['public_departure']);
                 departureTime = DateTime.fromObject(departureTime);
 
                 let predictedDeparture = departureTime.plus({minutes: Math.max(0, timetableVariationDeparture)});
-                record['MVTDEPARTURE']['predicted_departure'] = predictedDeparture.toLocaleString(DateTime.TIME_24_SIMPLE);
+                record['predicted_departure'] = predictedDeparture.toLocaleString(DateTime.TIME_24_SIMPLE);
             }
 
             return record;
