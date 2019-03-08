@@ -47,7 +47,6 @@ router.get(
                 .then(schedules => elasticFormatting.removeElasticMetadata(schedules))
                 .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules))
                 .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
-                .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
                 .then(schedules => movementQuerying.getTrainMovementIdFromSchedules(schedules, time))
                 .then(schedules => movementQuerying.getTrainMovementsFromSchedules(schedules, time))
                 .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
