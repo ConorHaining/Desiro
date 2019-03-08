@@ -49,9 +49,7 @@ module.exports = {
     
     filterValidSTPIndicators: (schedules) => {
       
-        let validSchedule = {
-            'stp_indicator': schedules[0]['stp_indicator']
-        };
+        let validSchedule = schedules[0];
 
         for (let i = 0; i < schedules.length; i++) {
             const schedule = schedules[i];
