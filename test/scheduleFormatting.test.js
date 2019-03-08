@@ -188,6 +188,18 @@ describe('Schedules', function() {
 
             expect(schedule).to.have.property('stp_indicator', 'C');
         });
+
+        it('should return the VAR(O) schedule if that is the only one present', () => {
+            let schedules = [
+                {
+                    'stp_indicator': 'O'
+                },
+            ];
+            
+            let schedule = scheduleFormatting.filterValidSTPIndicators(schedules);
+
+            expect(schedule).to.have.property('stp_indicator', 'O');
+        });
     
         it('should return the STP(N) schedule if there is no CAN(C)', () => {
             let schedules = [
@@ -215,6 +227,7 @@ describe('Schedules', function() {
 
             expect(schedule).to.have.property('stp_indicator', 'C');
         });
+
 
         it('should return correct schedule regardless of order', () => {
             let schedules = [
