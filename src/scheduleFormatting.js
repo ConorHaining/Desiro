@@ -97,7 +97,7 @@ module.exports = {
                                 record['destination'] = module.exports.toProperCase(last['name']);
 
                                 if(item['MVTDEPARTURE']['actual_timestamp'] !== undefined){
-                                    record['actual_departure'] = DateTime.fromMillis(item['MVTDEPARTURE']['actual_timestamp']).toFormat('HH:mm:ss');
+                                    record['actual_departure'] = DateTime.fromMillis(item['MVTDEPARTURE']['actual_timestamp']).toFormat('HH:mm');
                                 } else {
                                     record['predicted_departure'] = item['predicted_departure'];
                                 }
@@ -109,13 +109,25 @@ module.exports = {
                                 record['origin'] = module.exports.toProperCase(first['name']);
                                 
                                 if(item['MVTARRIVAL']['actual_timestamp'] !== undefined){
-                                    record['actual_arrival'] = DateTime.fromMillis(item['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm:ss');
+                                    record['actual_arrival'] = DateTime.fromMillis(item['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm');
                                 } else {
                                     record['predicted_arrival'] = item['predicted_arrival'];
                                 }
                             }
                         } catch (error) {
                             reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
+                        }
+
+                        if('associations' in schedule) {
+                            if (direction === Direction.DEPARTURES) {
+                                // let last = schedule['location_records'].pop()['location'][0];
+                                console.log(last);
+                                let lastAssoc = schedule['associations']['location_records'].pop()['location'][0];
+                                console.log(lastAssoc);
+                                record['destination'] = `${module.exports.toProperCase(last['name'])} and ${module.exports.toProperCase(lastAssoc['name'])}`
+                            } else if (direction === Direction.ARRIVALS) {
+
+                            }
                         }
     
                    }
