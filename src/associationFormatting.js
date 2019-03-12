@@ -1,6 +1,18 @@
 module.exports = {
     filterValidRunningDaysFromSchedules: (schedules) => {
-
+        return new Promise((resolve, reject) => {
+            schedules = schedules.map(schedule => {
+                try {
+                    if('associations' in schedule) {
+                        schedule['associations'] = schedule['associations'].filter(association => module.exports.filterValidRunningDays(association));
+                    }
+                } catch (error) {
+                    reject({'message': 'Association Valid Running Days', status: 500, details: error.message});            
+                }
+                return schedule;
+            });
+            resolve(schedules);
+        });
     },
     
     filterValidRunningDays: (association) => {
@@ -10,21 +22,28 @@ module.exports = {
             runningDayIndex = 6;
         }
 
-        const runningDays = association['assoc_days'];
+        const runningDays = association['running_days'];
 
         return runningDays.charAt(runningDayIndex) === '1';
     },
     
     
     filterValidSTPIndicatorsFromSchedules: (schedules) => {
+        return new Promise((resolve, reject) => {
+            schedules = schedules.map(schedule => {
+                if('associations' in schedule) {
+                    schedule['associations'] = module.exports.filterValidSTPIndicators(schedule['associations']);
+                }
     
+                return schedule;
+            });
+            resolve(schedules);
+        });
     },
     
     filterValidSTPIndicators: (associations) => {
       
-        let validAssociation = {
-            'stp_indicator': undefined
-        };
+        let validAssociation = associations[0];
 
         for (let i = 0; i < associations.length; i++) {
             const association = associations[i];

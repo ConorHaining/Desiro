@@ -13,7 +13,7 @@ describe('Associations', function() {
             
             it('should return a schedule for ******1', () => {
                 let association = {
-                    'assoc_days': '0000001'
+                    'running_days': '0000001'
                 };
                 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -23,7 +23,7 @@ describe('Associations', function() {
             
             it('should not return a schedule for ******0', () => {
                 let association = {
-                    'assoc_days': '1111110'
+                    'running_days': '1111110'
                 };
 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -39,7 +39,7 @@ describe('Associations', function() {
         
             it('should return a schedule for 1******', () => {
                 let association = {
-                    'assoc_days': '1000000'
+                    'running_days': '1000000'
                 };
                 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -49,7 +49,7 @@ describe('Associations', function() {
             
             it('should not return a schedule for 0******', () => {
                 let association = {
-                    'assoc_days': '0111111'
+                    'running_days': '0111111'
                 };
 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -65,7 +65,7 @@ describe('Associations', function() {
         
             it('should return a schedule for *****1*', () => {
                 let association = {
-                    'assoc_days': '0000010'
+                    'running_days': '0000010'
                 };
                 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -75,7 +75,7 @@ describe('Associations', function() {
             
             it('should not return a schedule for *****0*', () => {
                 let association = {
-                    'assoc_days': '1111101'
+                    'running_days': '1111101'
                 };
 
                 association = associationFormatting.filterValidRunningDays(association);
@@ -84,6 +84,39 @@ describe('Associations', function() {
             });
         });
     
+    });
+
+    describe('Filter Valid Running Days (Multiple)', function() {
+        beforeEach(() => {
+            Date.prototype.getDay = function() { return 6; };
+        });
+
+        it('should resolve when given an array of associations', async () => {
+            let schedules = [
+                {
+                    associations: [
+                        {'running_days': '1111101'},
+                        {'running_days': '0000010'},
+                        {'running_days': '0000010'},
+                        {'running_days': '1111101'},
+                        {'running_days': '0000010'},
+                    ]
+                }
+            ];
+
+            let validSchedules = await associationFormatting.filterValidRunningDaysFromSchedules(schedules);
+            expect(validSchedules[0]['associations']).to.be.an('array');
+            expect(validSchedules[0]['associations']).to.have.length(3);
+        });
+
+        it('should resolve when not given an array of associations', async () => {
+            let schedules = [
+                {}
+            ];
+
+            let validSchedules = await associationFormatting.filterValidRunningDaysFromSchedules(schedules);
+            expect(validSchedules[0]['associations']).to.be.undefined;
+        });
     });
     
     describe('Filter STP Validity', function() {
@@ -203,6 +236,32 @@ describe('Associations', function() {
             expect(association).to.have.property('stp_indicator', 'C');
         });
     
+    });
+
+    describe('Filter STP Validity (Multiple)', function() {
+
+        it('should resolve when given an array of associations', async () => {
+            let schedules = [
+                {
+                    associations: [
+                        {'STP_indicator': 'P'},
+                        {'STP_indicator': 'O'},
+                    ]
+                }
+            ];
+
+            let validSchedules = await associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules);
+            expect(validSchedules[0]['associations']).to.be.an('object');
+        });
+
+        it('should resolve when not given an array of associations', async () => {
+            let schedules = [
+                {}
+            ];
+
+            let validSchedules = await associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules);
+            expect(validSchedules[0]['associations']).to.be.undefined;
+        });
     });
     
     describe('Discarding Next (NP) Associations', function() {
