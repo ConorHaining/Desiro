@@ -106,7 +106,8 @@ module.exports = {
         });
     },
 
-    getAssociationSchedules: (schedules) => {
+    getAssociationSchedules: (schedules, when) => {
+      date = when.toFormat('dd/LL/yyyy');
       schedules = schedules.map(async(schedule) => {
         const uid = schedule['uid'];
         if('associations' in schedule){
@@ -122,10 +123,31 @@ module.exports = {
           let results = await ES.search({
             index: 'schedule',
             body: {
-              "size": 50,
               "query": {
-                "match": {
-                  "uid": searchUID
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "start_date": {
+                          "lte": "12/03/2019",
+                          "format": "d/M/y"
+                        }
+                      }
+                    },
+                    {
+                      "range": {
+                        "end_start": {
+                          "gte": "12/03/2019",
+                          "format": "d/M/y"
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "uid": searchUID
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -134,8 +156,8 @@ module.exports = {
           results = results.hits.hits;
           results = results.map(result => {return result['_source'];});
           results = results.filter(result => scheduleFormatting.filterValidRunningDays(result));
-          result = scheduleFormatting.filterValidSTPIndicators(results);
-          schedule['associations'] = result;
+          validSchedule = scheduleFormatting.filterValidSTPIndicators(results);
+          schedule['associations'] = validSchedule;
 
         }
         return schedule;
