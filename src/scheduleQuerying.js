@@ -1,5 +1,6 @@
 const ES = require('../inc/elasticsearch');
 const direction = require('../data/direction');
+const scheduleFormatting = require('../src/scheduleFormatting.js');
 
 module.exports = {
     
@@ -106,6 +107,40 @@ module.exports = {
     },
 
     getAssociationSchedules: (schedules) => {
+      schedules = schedules.map(async(schedule) => {
+        const uid = schedule['uid'];
+        if('associations' in schedule){
+          const associations = schedule['associations'];
+          
+          let searchUID;
+          if(associations['main_train'] === uid){
+            searchUID = associations['assoc_train'];
+          } else if(associations['assoc_train'] === uid){
+            searchUID = associations['main_train'];
+          }
 
+          let results = await ES.search({
+            index: 'schedule',
+            body: {
+              "size": 50,
+              "query": {
+                "match": {
+                  "uid": searchUID
+                }
+              }
+            }
+          });
+
+          results = results.hits.hits;
+          results = results.map(result => {return result['_source'];});
+          results = results.filter(result => scheduleFormatting.filterValidRunningDays(result));
+          result = scheduleFormatting.filterValidSTPIndicators(results);
+          schedule['associations'] = result;
+
+        }
+        return schedule;
+      });
+
+      return Promise.all(schedules);
     }
 }
