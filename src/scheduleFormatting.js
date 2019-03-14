@@ -77,14 +77,19 @@ module.exports = {
     createStationBoard: (schedules, direction, crs) => {
         return new Promise((resolve, reject) => {
             let board = schedules.map(schedule => {
-
+                if(schedule['uid'] === 'G88331') {console.log(JSON.stringify(schedule, null, 2))}
                 let record = {};
                 record['operator'] = schedule['atoc_code'];
                 record['uid'] = schedule['uid'];
                 record['category'] = schedule['train_category'];
                 
                 schedule['location_records'].forEach(item => {
-                   if (item['location'][0]['crs'] == crs){
+
+                    if(item['MVTCancel']){
+                        record['cancelled'] = true;
+                    }
+
+                    if (item['location'][0]['crs'] == crs){
                         let last = schedule['location_records'].pop()['location'][0];
                         let first = schedule['location_records'].shift()['location'][0]
                         record['platform'] = item['platform'];
@@ -121,9 +126,7 @@ module.exports = {
                         if('associations' in schedule) {
                             if (direction === Direction.DEPARTURES) {
                                 // let last = schedule['location_records'].pop()['location'][0];
-                                console.log(last);
                                 let lastAssoc = schedule['associations']['location_records'].pop()['location'][0];
-                                console.log(lastAssoc);
                                 record['destination'] = `${module.exports.toProperCase(last['name'])} and ${module.exports.toProperCase(lastAssoc['name'])}`
                             } else if (direction === Direction.ARRIVALS) {
 
