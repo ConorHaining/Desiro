@@ -20,7 +20,7 @@ module.exports = {
                     },
                     {
                       "range": {
-                        "received_at": {
+                        "nr_queue_timestamp": {
                           "format": "dd/MM/yyyy",
                           "gte": date,
                           "lte": date
@@ -61,13 +61,8 @@ module.exports = {
                         }
                       },
                       {
-                        "match": {
-                          "message_type": "0003"
-                        }
-                      },
-                      {
                         "range": {
-                          "received_at": {
+                          "nr_queue_timestamp": {
                             "format": "dd/MM/yyyy",
                             "gte": date,
                             "lte": date
@@ -92,6 +87,9 @@ module.exports = {
                 if(MVTStanox === SCHStanox){
                   const event_type = element['event_type'];
                   record[`MVT${event_type}`] = element;
+                }
+                if(SCHStanox === element['location_stanox']){
+                  record['MVTCancel'] = element;
                 }
               }
               return record;
