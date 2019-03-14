@@ -44,6 +44,13 @@ module.exports = {
                               ]
                             }
                           }
+                        ],
+                        "must_not": [
+                          {
+                            "match": {
+                              "category": "NP"
+                            }
+                          }
                         ]
                       }
                     }

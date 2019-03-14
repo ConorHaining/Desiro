@@ -157,7 +157,11 @@ module.exports = {
           results = results.map(result => {return result['_source'];});
           results = results.filter(result => scheduleFormatting.filterValidRunningDays(result));
           validSchedule = scheduleFormatting.filterValidSTPIndicators(results);
-          schedule['associations'] = validSchedule;
+          if(!validSchedule['signalling_id'].startsWith('5')){
+            schedule['associations'] = validSchedule;
+          } else {
+            delete schedule['associations'];
+          }
 
         }
         return schedule;

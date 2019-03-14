@@ -77,7 +77,6 @@ module.exports = {
     createStationBoard: (schedules, direction, crs) => {
         return new Promise((resolve, reject) => {
             let board = schedules.map(schedule => {
-                if(schedule['uid'] === 'G88331') {console.log(JSON.stringify(schedule, null, 2))}
                 let record = {};
                 record['operator'] = schedule['atoc_code'];
                 record['uid'] = schedule['uid'];
