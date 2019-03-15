@@ -179,6 +179,33 @@ module.exports = {
     
         });
     },
+
+    createJourneyBoard: (schedules) => {
+        let schedule = schedules[0];
+        let board = {
+            locations: []
+        }
+
+        return new Promise((resolve, reject) => {
+            board.locations = schedule['location_records'].map(record => {
+                if(record['public_departure'] || record['public_arrival']){
+                    return {
+                        public_departure: record['public_departure'],
+                        public_arrival: record['public_arrival'],
+                        actual_departure: (record['MVTDEPARTURE']) ? record['MVTDEPARTURE']['actual_timestamp']: null,
+                        actual_arrival: (record['MVTARRIVAL']) ? record['MVTARRIVAL']['actual_timestamp']: null,
+                        predicted_departure: record['predicted_departure'],
+                        predicted_arrival: record['predicted_arrival'],
+                        name: module.exports.toProperCase(record['location'][0]['name'])
+                    }
+                }
+            }).filter(x => x != null);
+            board['operator'] = schedule['atoc_code'];
+            board['uid'] = schedule['uid'];
+            board['category'] = schedule['train_category'];
+            resolve(board);
+        });
+    },
     
     /**
      * Helpers

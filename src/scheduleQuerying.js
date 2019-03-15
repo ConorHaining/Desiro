@@ -168,5 +168,55 @@ module.exports = {
       });
 
       return Promise.all(schedules);
+    },
+
+    getScheduleByUID: (uid, when) => {
+      date = when.toFormat('dd/LL/yyyy');
+      return new Promise((resolve, reject) => {
+
+        ES.search({
+          index: 'schedule',
+          body: {
+            "size": 40,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "match": {
+                      "uid": uid
+                    }
+                  },
+                  {
+                    "range": {
+                      "start_date": {
+                        "lte": date,
+                        "format": "d/M/y"
+                      }
+                    }
+                  },
+                  {
+                    "range": {
+                      "end_start": {
+                        "gte": date,
+                        "format": "d/M/y"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }).then((body) => {
+          let schedules = body.hits.hits.map(schedule => {
+            return schedule['_source'];
+          });
+  
+          resolve(schedules);
+        }).catch(e => {
+          reject({message: 'Elasticsearch Error', status: 500, details: e.message});
+        });
+
+      });
+
     }
 }

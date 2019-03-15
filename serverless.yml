@@ -74,6 +74,13 @@ functions:
           method: GET
           cors: true
           private: true
+          request:
+            parameters:
+              paths:
+                uid: true
+                year: true
+                month: true
+                day: true
 
 custom:
 
