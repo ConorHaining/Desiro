@@ -14,7 +14,7 @@ module.exports = {
                     }
                   }
             }).then((body) => {
-                if (body.hits.total === 1){
+                if (body.hits.total >= 1){
                     let result = body.hits.hits;
                     tiploc = result[0]._source.code;
                     resolve(tiploc);
