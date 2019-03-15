@@ -78,9 +78,12 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let board = schedules.map(schedule => {
                 let record = {};
+                const association = schedule['associations'];
                 record['operator'] = schedule['atoc_code'];
                 record['uid'] = schedule['uid'];
                 record['category'] = schedule['train_category'];
+
+                listOfCrs = schedule['location_records'].map((x) => {return x['location'][0]['crs']});
                 
                 schedule['location_records'].forEach(item => {
 
@@ -121,21 +124,54 @@ module.exports = {
                         } catch (error) {
                             reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
                         }
+                        if(association !== undefined) {
+                            console.info(`UID ${schedule['uid']} | Association`)
+                            let found = false;
+                            const assocLocation = association['location_records'];
+                            listOfAssocCrs = assocLocation.map((x) => {return x['location'][0]['crs']});
+                            const split = listOfCrs.filter(value => (listOfAssocCrs.includes(value) && value !== null))[0];
 
-                        if('associations' in schedule) {
-                            if (direction === Direction.DEPARTURES) {
-                                // let last = schedule['location_records'].pop()['location'][0];
-                                let lastAssoc = schedule['associations']['location_records'].pop()['location'][0];
-                                record['destination'] = `${module.exports.toProperCase(last['name'])} and ${module.exports.toProperCase(lastAssoc['name'])}`
-                            } else if (direction === Direction.ARRIVALS) {
+                            if(direction === Direction.DEPARTURES) {
+                               if(listOfCrs.includes(crs) && !listOfAssocCrs.includes(crs)) {
+                                   console.log(listOfCrs.includes(crs) && !listOfAssocCrs.includes(crs))
+                                   found = true;
+                               }
+                               if(!listOfCrs.includes(crs) && listOfAssocCrs.includes(crs)) {
+                                   console.log(!listOfCrs.includes(crs) && listOfAssocCrs.includes(crs))
+                                   found = false;
+                               }
 
+                               if(listOfCrs.indexOf(crs) > listOfCrs.indexOf(split)){
+                                   found = false;
+                               }
+                               try {
+                                   if (found) {
+                                       let lastAssoc = assocLocation.pop()['location'][0];
+                                       record['destination'] = `${module.exports.toProperCase(last['name'])} & ${module.exports.toProperCase(lastAssoc['name'])}`
+                                   }
+                               } catch (error) {
+                                   reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
+                               }
+
+                            } else if(direction == Direction.ARRIVALS){
+
+                                try {
+                                    if (found) {
+                                        let firstAssoc = assocLocation.shift()['location'][0];
+                                        record['origin'] = `${module.exports.toProperCase(first['name'])} & ${module.exports.toProperCase(firstAssoc['name'])}`
+                                    }
+                                } catch (error) {
+                                    reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
+                                }
                             }
+                            
                         }
     
                    }
                 });
 
                 return record;
+
     
             });
     
