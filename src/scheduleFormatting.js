@@ -195,7 +195,8 @@ module.exports = {
                         actual_arrival: (record['MVTARRIVAL']) ? record['MVTARRIVAL']['actual_timestamp']: null,
                         predicted_departure: record['predicted_departure'],
                         predicted_arrival: record['predicted_arrival'],
-                        name: module.exports.toProperCase(record['location'][0]['name'])
+                        name: module.exports.toProperCase(record['location'][0]['name']),
+                        crs: record['location'][0]['crs']
                     }
                 }
             }).filter(x => x != null);
