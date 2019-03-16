@@ -2,11 +2,11 @@ const Direction = require('../data/direction.js');
 const { DateTime } = require('luxon');
 
 module.exports = {
-    filterValidRunningDaysFromSchedules: (schedules) => {
+    filterValidRunningDaysFromSchedules: (schedules, when) => {
         return new Promise((resolve, reject) => {
             let validSchedules = [];
             try {
-                validSchedules = schedules.filter(element => module.exports.filterValidRunningDays(element));
+                validSchedules = schedules.filter(element => module.exports.filterValidRunningDays(element, when));
             } catch (error) {
                 reject({'message': 'Valid Schedule Filter', 'status': 500, 'details': error.message});
             }
@@ -14,9 +14,8 @@ module.exports = {
         });
     },
     
-    filterValidRunningDays: (schedule) => {
-        const today = new Date();
-        let runningDayIndex = today.getDay() - 1;
+    filterValidRunningDays: (schedule, when) => {
+        let runningDayIndex = when.weekday - 1;
         if(runningDayIndex < 0){
             runningDayIndex = 6;
         }
@@ -185,7 +184,7 @@ module.exports = {
         let board = {
             locations: []
         }
-
+        console.log(schedule);
         return new Promise((resolve, reject) => {
             board.locations = schedule['location_records'].map(record => {
                 if(record['public_departure'] || record['public_arrival']){

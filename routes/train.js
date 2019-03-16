@@ -21,7 +21,7 @@ router.get(
     });
     
     scheduleQuerying.getScheduleByUID(req.params.uid, when)
-      .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules))
+      .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules, when))
       .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
       .then(schedules => associationQuerying.getAssociationsFromSchedules(schedules, when))
       .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules))

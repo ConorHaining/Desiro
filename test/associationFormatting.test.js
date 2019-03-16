@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const { DateTime } = require('luxon');
 
 describe('Associations', function() {
 
@@ -7,78 +8,75 @@ describe('Associations', function() {
     describe('Filter Valid Running Days', function() {
         describe('Sundays', () =>{
             
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 0; };
-            });
             
             it('should return a schedule for ******1', () => {
+                const when = DateTime.fromObject({weekday: 7});
                 let association = {
                     'running_days': '0000001'
                 };
                 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.true;
             });
             
             it('should not return a schedule for ******0', () => {
+                const when = DateTime.fromObject({weekday: 7});
                 let association = {
                     'running_days': '1111110'
                 };
 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.false;
             });
         });
     
         describe('Mondays', () =>{
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 1; };
-            });
         
             it('should return a schedule for 1******', () => {
+                const when = DateTime.fromObject({weekday: 1});
                 let association = {
                     'running_days': '1000000'
                 };
                 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.true;
             });
             
             it('should not return a schedule for 0******', () => {
+                const when = DateTime.fromObject({weekday: 1});
                 let association = {
                     'running_days': '0111111'
                 };
 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.false;
             });
         });
     
         describe('Saturdays', () =>{
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 6; };
-            });
         
             it('should return a schedule for *****1*', () => {
+                const when = DateTime.fromObject({weekday: 6});
                 let association = {
                     'running_days': '0000010'
                 };
                 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.true;
             });
             
             it('should not return a schedule for *****0*', () => {
+                const when = DateTime.fromObject({weekday: 6});
                 let association = {
                     'running_days': '1111101'
                 };
 
-                association = associationFormatting.filterValidRunningDays(association);
+                association = associationFormatting.filterValidRunningDays(association, when);
 
                 expect(association).to.be.false;
             });
@@ -87,9 +85,6 @@ describe('Associations', function() {
     });
 
     describe('Filter Valid Running Days (Multiple)', function() {
-        beforeEach(() => {
-            Date.prototype.getDay = function() { return 6; };
-        });
 
         it('should resolve when given an array of associations', async () => {
             let schedules = [
@@ -104,7 +99,8 @@ describe('Associations', function() {
                 }
             ];
 
-            let validSchedules = await associationFormatting.filterValidRunningDaysFromSchedules(schedules);
+            const when = DateTime.fromObject({weekday: 6});
+            let validSchedules = await associationFormatting.filterValidRunningDaysFromSchedules(schedules, when);
             expect(validSchedules[0]['associations']).to.be.an('array');
             expect(validSchedules[0]['associations']).to.have.length(3);
         });

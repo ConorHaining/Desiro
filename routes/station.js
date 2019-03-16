@@ -45,7 +45,7 @@ router.get(
             tiplocQuerying.getTiploc(crs)
                 .then(tiploc => scheduleQuerying.getSchedulesForTiploc(tiploc, directionMode, time))
                 .then(schedules => elasticFormatting.removeElasticMetadata(schedules))
-                .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules))
+                .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules, when))
                 .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
                 .then(schedules => movementQuerying.getTrainMovementIdFromSchedules(schedules, time))
                 .then(schedules => movementQuerying.getTrainMovementsFromSchedules(schedules, time))

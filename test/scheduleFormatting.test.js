@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const { DateTime } = require('luxon');
 
 describe('Schedules', function() {
     
@@ -7,78 +8,75 @@ describe('Schedules', function() {
     describe('Filter Valid Running Days', function() {
         describe('Sundays', () =>{
             
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 0; };
-            });
             
             it('should return a schedule for ******1', () => {
+                const when = DateTime.fromObject({weekday: 7});
                 let schedule = {
                     'running_days': '0000001'
                 };
                 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
-
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
+                
                 expect(schedule).to.be.true;
             });
             
             it('should not return a schedule for ******0', () => {
+                const when = DateTime.fromObject({weekday: 7});
                 let schedule = {
                     'running_days': '1111110'
                 };
 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
 
                 expect(schedule).to.be.false;
             });
         });
     
         describe('Mondays', () =>{
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 1; };
-            });
         
             it('should return a schedule for 1******', () => {
+                const when = DateTime.fromObject({weekday: 1});
                 let schedule = {
                     'running_days': '1000000'
                 };
                 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
-
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
+                
                 expect(schedule).to.be.true;
             });
             
             it('should not return a schedule for 0******', () => {
+                const when = DateTime.fromObject({weekday: 1});
                 let schedule = {
                     'running_days': '0111111'
                 };
 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
 
                 expect(schedule).to.be.false;
             });
         });
     
         describe('Saturdays', () =>{
-            beforeEach(() => {
-                Date.prototype.getDay = function() { return 6; };
-            });
         
             it('should return a schedule for *****1*', () => {
+                const when = DateTime.fromObject({weekday: 6});
                 let schedule = {
                     'running_days': '0000010'
                 };
                 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
-
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
+                
                 expect(schedule).to.be.true;
             });
             
             it('should not return a schedule for *****0*', () => {
+                const when = DateTime.fromObject({weekday: 6});
                 let schedule = {
                     'running_days': '1111101'
                 };
 
-                schedule = scheduleFormatting.filterValidRunningDays(schedule);
+                schedule = scheduleFormatting.filterValidRunningDays(schedule, when);
 
                 expect(schedule).to.be.false;
             });
@@ -100,7 +98,8 @@ describe('Schedules', function() {
                 {'running_days': '0000010'},
             ];
 
-            let validSchedules = await scheduleFormatting.filterValidRunningDaysFromSchedules(schedules);
+            const when = DateTime.fromObject({weekday: 6});
+            let validSchedules = await scheduleFormatting.filterValidRunningDaysFromSchedules(schedules, when);
             expect(validSchedules).to.be.an('array');
             expect(validSchedules).to.have.length(3);
         });

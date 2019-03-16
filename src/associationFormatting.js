@@ -1,10 +1,10 @@
 module.exports = {
-    filterValidRunningDaysFromSchedules: (schedules) => {
+    filterValidRunningDaysFromSchedules: (schedules, when) => {
         return new Promise((resolve, reject) => {
             schedules = schedules.map(schedule => {
                 try {
                     if('associations' in schedule) {
-                        schedule['associations'] = schedule['associations'].filter(association => module.exports.filterValidRunningDays(association));
+                        schedule['associations'] = schedule['associations'].filter(association => module.exports.filterValidRunningDays(association, when));
                     }
                 } catch (error) {
                     reject({'message': 'Association Valid Running Days', status: 500, details: error.message});            
@@ -15,15 +15,13 @@ module.exports = {
         });
     },
     
-    filterValidRunningDays: (association) => {
-        const today = new Date();
-        let runningDayIndex = today.getDay() - 1;
+    filterValidRunningDays: (association, when) => {
+        let runningDayIndex = when.weekday - 1;
         if(runningDayIndex < 0){
             runningDayIndex = 6;
         }
 
         const runningDays = association['running_days'];
-
         return runningDays.charAt(runningDayIndex) === '1';
     },
     
