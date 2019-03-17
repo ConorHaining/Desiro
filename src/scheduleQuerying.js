@@ -4,43 +4,14 @@ const scheduleFormatting = require('../src/scheduleFormatting.js');
 
 module.exports = {
     
-    getSchedulesFromUIDs: (UIDs, when) => {
+    getSchedulesFromUIDs: (UIDs, directionMode, when) => {
         return new Promise((resolve, reject) => {
-
-            startTime = when.toFormat('HH:mm');
-            endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
+          startTime = when.toFormat('HH:mm');
+          endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
             date = when.toFormat('dd/LL/yyyy');
 
             let query = {
               "size": 40,
-              "sort": [
-                {
-                  "location_records.public_arrival": {
-                    "order": "asc",
-                    "nested": {
-                      "path": "location_records",
-                      "filter": {
-                        "term": {
-                          "location_records.tiploc": tiploc
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "location_records.public_departure": {
-                    "order": "asc",
-                    "nested": {
-                      "path": "location_records",
-                      "filter": {
-                        "term": {
-                          "location_records.tiploc": tiploc
-                        }
-                      }
-                    }
-                  }
-                }
-              ],
               "query": {
                 "bool": {
                   "must": [
@@ -67,9 +38,52 @@ module.exports = {
                     }
                   ]
                 }
-              }
+              },
+              "sort": [
+                {
+                  "location_records.public_arrival": {
+                    "order": "asc",
+                    "nested": {
+                      "path": "location_records",
+                      "filter": {
+                        "term": {
+                          "location_records.tiploc": tiploc
+                        }
+                      }
+                    },
+                    "missing": "0"
+                  }
+                },
+                {
+                  "location_records.public_departure": {
+                    "order": "asc",
+                    "nested": {
+                      "path": "location_records",
+                      "filter": {
+                        "term": {
+                          "location_records.tiploc": tiploc
+                        }
+                      }
+                    },
+                    "missing": "0"
+                  }
+                }
+              ]
             }
 
+            // let field;
+            // console.log(directionMode)
+            // if(directionMode === direction.DEPARTURES) {
+            //   field = 'public_departure';
+            // } else if (directionMode === direction.ARRIVALS){
+            //   field = 'public_arrival';
+            // }
+            // console.log(field)
+            // query = JSON.stringify(query);
+            // query = query.replace('$field', field);
+            // query = JSON.parse(query);
+            // console.log(query);
+            
             query['query']['bool']['must'][0]['bool']['should'] = UIDs.map(uid => {
               return {
                 "match": {
