@@ -82,7 +82,6 @@ module.exports = {
               for (let i = 0; i < movements.length; i++) {
                 const element = movements[i]['_source'];
                 const MVTStanox = element['stanox'];
-                // console.log(MVTStanox);
                 
                 if(MVTStanox === SCHStanox){
                   const event_type = element['event_type'];

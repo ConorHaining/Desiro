@@ -36,7 +36,7 @@ module.exports = {
                 groupedSchedules[uid] = [schedule]; 
             }
         });
-        
+
         return new Promise((resolve, reject) => {
             let validSchedules = [];
             validSchedules = Object.values(groupedSchedules)
@@ -71,6 +71,34 @@ module.exports = {
 
         return validSchedule;
 
+    },
+
+    filterValidTiplocFromSchedules: (schedules, direction, tiploc) => {
+        let field;
+        if(direction === Direction.DEPARTURES) {
+            field = 'public_departure';
+        } else if (direction === Direction.ARRIVALS){
+            field = 'public_arrival';
+        }
+        
+        return new Promise((resolve, reject) => {
+            Promise.resolve(tiploc).then(tiploc => {
+                schedules = schedules.filter(schedule => {
+                    const location_records = schedule['location_records'];
+                    let found = false;
+                    
+                    location_records.forEach(record => {
+                        if(record['tiploc'] === tiploc && field in record) {
+                            found = true;
+                        }
+                    });
+                    
+                    return found;
+                });
+                
+                resolve(schedules);
+            });
+        });
     },
 
     createStationBoard: (schedules, direction, crs) => {
@@ -184,19 +212,29 @@ module.exports = {
         let board = {
             locations: []
         }
-        console.log(schedule);
         return new Promise((resolve, reject) => {
             board.locations = schedule['location_records'].map(record => {
                 if(record['public_departure'] || record['public_arrival']){
+                    let actualDeparture;
+                    let actualArrival;
+                    if(record['MVTDEPARTURE']) {
+                        actualDeparture = (record['MVTDEPARTURE']['actual_timestamp']) ? DateTime.fromMillis(record['MVTDEPARTURE']['actual_timestamp']).toFormat('HH:mm:ss'): null;
+                    }
+                    if(record['MVTARRIVAL']) {
+                        actualArrival = (record['MVTARRIVAL']['actual_timestamp']) ? DateTime.fromMillis(record['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm:ss'): null;
+                    }
+
                     return {
-                        public_departure: record['public_departure'],
-                        public_arrival: record['public_arrival'],
-                        actual_departure: (record['MVTDEPARTURE']) ? record['MVTDEPARTURE']['actual_timestamp']: null,
-                        actual_arrival: (record['MVTARRIVAL']) ? record['MVTARRIVAL']['actual_timestamp']: null,
-                        predicted_departure: record['predicted_departure'],
-                        predicted_arrival: record['predicted_arrival'],
-                        name: module.exports.toProperCase(record['location'][0]['name']),
-                        crs: record['location'][0]['crs']
+                        publicDeparture: record['public_departure'],
+                        publicArrival: record['public_arrival'],
+                        actualDeparture: actualDeparture,
+                        actualArrival: actualArrival,
+                        predictedDeparture: record['predicted_departure'],
+                        predictedArrival: record['predicted_arrival'],
+                        station: {
+                            name: module.exports.toProperCase(record['location'][0]['name']),
+                            crs: record['location'][0]['crs']
+                        }
                     }
                 }
             }).filter(x => x != null);

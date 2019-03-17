@@ -17,7 +17,6 @@ router.get(
     ['/:stationCode/:direction/:year/:month/:day/:time',
      '/:stationCode/:direction/']
     , (req, res) => {
-        console.log(req.params)
         const crs = req.params.stationCode.toUpperCase();
         let time;
         if (req.params.time) {
@@ -42,11 +41,12 @@ router.get(
         }
 
         if(time.isValid) {
-            tiplocQuerying.getTiploc(crs)
-                .then(tiploc => scheduleQuerying.getSchedulesForTiploc(tiploc, directionMode, time))
-                .then(schedules => elasticFormatting.removeElasticMetadata(schedules))
+            const tiploc = tiplocQuerying.getTiploc(crs);
+                tiploc.then(tiploc => scheduleQuerying.getUIDsForTiploc(tiploc, time))
+                .then(uids => scheduleQuerying.getSchedulesFromUIDs(uids, time))
                 .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules, time))
                 .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
+                .then(schedules => scheduleFormatting.filterValidTiplocFromSchedules(schedules, directionMode, Promise.resolve(tiploc)))
                 .then(schedules => movementQuerying.getTrainMovementIdFromSchedules(schedules, time))
                 .then(schedules => movementQuerying.getTrainMovementsFromSchedules(schedules, time))
                 .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
