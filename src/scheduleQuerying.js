@@ -11,7 +11,7 @@ module.exports = {
             date = when.toFormat('dd/LL/yyyy');
 
             let query = {
-              "size": 40,
+              "size": 200,
               "query": {
                 "bool": {
                   "must": [
