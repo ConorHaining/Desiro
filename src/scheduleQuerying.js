@@ -4,7 +4,7 @@ const scheduleFormatting = require('../src/scheduleFormatting.js');
 
 module.exports = {
     
-    getSchedulesFromUIDs: (UIDs, directionMode, when) => {
+    getSchedulesFromUIDs: (UIDs, when) => {
         return new Promise((resolve, reject) => {
           startTime = when.toFormat('HH:mm');
           endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
@@ -120,7 +120,7 @@ module.exports = {
             "_source": {
               "includes": "uid"
             }, 
-            "size": 80,
+            "size": 500,
             "query": {
               "bool": {
                 "must": [
