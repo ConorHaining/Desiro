@@ -4,7 +4,7 @@ const scheduleFormatting = require('../src/scheduleFormatting.js');
 
 module.exports = {
     
-    getSchedulesFromUIDs: (UIDs, when) => {
+    getSchedulesFromUIDs: (UIDs, directionMode, when) => {
         return new Promise((resolve, reject) => {
           startTime = when.toFormat('HH:mm');
           endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
@@ -40,8 +40,9 @@ module.exports = {
                 }
               },
               "sort": [
+                
                 {
-                  "location_records.public_arrival": {
+                  "location_records.$field": {
                     "order": "asc",
                     "nested": {
                       "path": "location_records",
@@ -51,38 +52,21 @@ module.exports = {
                         }
                       }
                     },
-                    "missing": "0"
-                  }
-                },
-                {
-                  "location_records.public_departure": {
-                    "order": "asc",
-                    "nested": {
-                      "path": "location_records",
-                      "filter": {
-                        "term": {
-                          "location_records.tiploc": tiploc
-                        }
-                      }
-                    },
-                    "missing": "0"
+                    "missing": "_last"
                   }
                 }
               ]
             }
 
-            // let field;
-            // console.log(directionMode)
-            // if(directionMode === direction.DEPARTURES) {
-            //   field = 'public_departure';
-            // } else if (directionMode === direction.ARRIVALS){
-            //   field = 'public_arrival';
-            // }
-            // console.log(field)
-            // query = JSON.stringify(query);
-            // query = query.replace('$field', field);
-            // query = JSON.parse(query);
-            // console.log(query);
+            let field;
+            if(directionMode === direction.DEPARTURES) {
+              field = 'public_departure';
+            } else if (directionMode === direction.ARRIVALS){
+              field = 'public_arrival';
+            }
+            query = JSON.stringify(query);
+            query = query.replace('$field', field);
+            query = JSON.parse(query);
             
             query['query']['bool']['must'][0]['bool']['should'] = UIDs.map(uid => {
               return {
@@ -91,6 +75,8 @@ module.exports = {
                 }
               }
             });
+
+            console.log(JSON.stringify(query))
 
             ES.search({
                 index: 'schedule',

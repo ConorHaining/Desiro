@@ -43,7 +43,7 @@ router.get(
         if(time.isValid) {
             const tiploc = tiplocQuerying.getTiploc(crs);
                 tiploc.then(tiploc => scheduleQuerying.getUIDsForTiploc(tiploc, time))
-                .then(uids => scheduleQuerying.getSchedulesFromUIDs(uids, time))
+                .then(uids => scheduleQuerying.getSchedulesFromUIDs(uids, directionMode, time))
                 .then(schedules => scheduleFormatting.filterValidRunningDaysFromSchedules(schedules, time))
                 .then(schedules => scheduleFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
                 .then(schedules => scheduleFormatting.filterValidTiplocFromSchedules(schedules, directionMode, Promise.resolve(tiploc)))
