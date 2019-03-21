@@ -16,6 +16,7 @@ module.exports = {
     },
     
     filterValidRunningDays: (association, when) => {
+        console.log(when.weekday)
         let runningDayIndex = when.weekday - 1;
         if(runningDayIndex < 0){
             runningDayIndex = 6;

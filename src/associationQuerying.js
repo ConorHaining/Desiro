@@ -58,10 +58,10 @@ module.exports = {
             });
             
             if(associations.hits.total > 0) {
-                schedule['associations'] = [];
-                associations.hits.hits.forEach(association => {
-                    schedule['associations'].push(association['_source']);
-                });
+              schedule['associations'] = [];
+              associations.hits.hits.forEach(association => {
+                schedule['associations'].push(association['_source']);
+              });
             }
 
             return schedule;

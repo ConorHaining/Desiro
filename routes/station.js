@@ -52,7 +52,7 @@ router.get(
                 .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
                 .then(schedules => movementFormatting.calculatePredictedTimeFromSchedules(schedules))
                 .then(schedules => associationQuerying.getAssociationsFromSchedules(schedules, time))
-                .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules))
+                .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules, time))
                 .then(schedules => associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
                 .then(schedules => scheduleQuerying.getAssociationSchedules(schedules, time))
                 .then(schedules => scheduleFormatting.createStationBoard(schedules, directionMode, crs))

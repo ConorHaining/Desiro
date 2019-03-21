@@ -76,8 +76,6 @@ module.exports = {
               }
             });
 
-            console.log(JSON.stringify(query))
-
             ES.search({
                 index: 'schedule',
                 body: query
@@ -232,7 +230,8 @@ module.exports = {
 
           results = results.hits.hits;
           results = results.map(result => {return result['_source'];});
-          results = results.filter(result => scheduleFormatting.filterValidRunningDays(result));
+          results = results.filter(result => scheduleFormatting.filterValidRunningDays(result, when));
+        
           validSchedule = scheduleFormatting.filterValidSTPIndicators(results);
           if(!validSchedule['signalling_id'].startsWith('5')){
             schedule['associations'] = validSchedule;
@@ -243,7 +242,6 @@ module.exports = {
         }
         return schedule;
       });
-
       return Promise.all(schedules);
     },
 
