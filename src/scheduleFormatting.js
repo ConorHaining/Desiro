@@ -235,6 +235,7 @@ module.exports = {
                     }
 
                     return {
+                        platform: record['platform'],
                         publicDeparture: record['public_departure'],
                         publicArrival: record['public_arrival'],
                         actualDeparture: actualDeparture,
