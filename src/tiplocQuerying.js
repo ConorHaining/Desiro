@@ -4,6 +4,12 @@ module.exports = {
     getTiploc: (crs) => {
         crs = crs.toUpperCase();
         return new Promise((resolve, reject) => {
+            // There are some special cases, notably major stations, we will handle those before searching
+            switch(crs) {
+                case 'VIC':
+                    resolve('VICTRIC');
+                break;
+            }
             ES.search({
                 'index': 'tiploc',
                 'body': {
