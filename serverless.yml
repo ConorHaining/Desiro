@@ -20,54 +20,42 @@ provider:
     - Sprinter
 
 functions:
-
-  stationArrivals:
+  base:
     handler: index.handler
     events:
       - http: 
-          path: /station/{stationCode}/arrivals
+          path: /
           method: GET
+          cors: true
           private: true
-          request:
-            parameters:
-              paths:
-                stationCode: true
+          
+  stationBoard:
+    handler: index.handler
+    events:
       - http: 
-          path: /station/{stationCode}/arrivals/{year}/{month}/{day}/{time}
+          path: /station/{stationCode}/{direction}
           method: GET
+          cors: true
           private: true
           request:
             parameters:
               paths:
                 stationCode: true
+                direction: true
+      - http: 
+          path: /station/{stationCode}/{direction}/{year}/{month}/{day}/{time}
+          method: GET
+          cors: true
+          private: true
+          request:
+            parameters:
+              paths:
+                stationCode: true
+                direction: true
                 year: false
                 month: false
                 day: false
                 time: false
-
-  stationDepartures:
-    handler: index.handler
-    events:
-      - http: 
-          path: /station/{stationCode}/departures
-          method: GET
-          private: true
-          request:
-            parameters:
-              paths:
-                stationCode: true
-      - http: 
-          path: /station/{stationCode}/departures/{year}/{month}/{day}/{time}
-          method: GET
-          private: true
-          request:
-            parameters:
-              paths:
-                stationCode: true
-                year: true
-                month: true
-                day: true
-                time: true
 
   stationList:
     handler: index.handler
@@ -75,6 +63,7 @@ functions:
       - http: 
           path: /station/list
           method: GET
+          cors: true
           private: true
 
   trainService:
@@ -83,7 +72,15 @@ functions:
       - http: 
           path: /train/{uid}/{year}/{month}/{day}
           method: GET
+          cors: true
           private: true
+          request:
+            parameters:
+              paths:
+                uid: true
+                year: true
+                month: true
+                day: true
 
 custom:
 
