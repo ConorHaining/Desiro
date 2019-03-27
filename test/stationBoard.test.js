@@ -1,25 +1,122 @@
 const expect = require('chai').expect;
+const direction = require('../data/direction.js');
 
 describe('Station Boards', function() {
 
-    const stationBoard = require('../src/stationBoard.js');
+    const StationBoard = require('../src/stationBoard.js');
 
     describe('Standard Keys', () => {
-        it('should have an operator', () => {
-            expect(true).to.be.false;
+        describe('Should have an operator', () => {
+            it('Departures', () => {
+                const schedules = [
+                    {'atoc_code': 'SR'}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES)
+                                .createBoard();;
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('operator');
+            });
+
+            it('Arrivals', () => {
+                const schedules = [
+                    {'atoc_code': 'SR'}
+                ];
+    
+                const board = new StationBoard(schedules, direction.ARRIVALS)
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('operator');
+            });
         });
 
-        it('should have a UID', () => {
-            expect(true).to.be.false;
+        describe('Should have a UID', () => {
+            it('Departures', () => {
+                const schedules = [
+                    {'uid': 'A12345'}
+                ];
+
+                const board = new StationBoard(schedules, direction.DEPARTURES)
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('uid');
+            });
+
+            it('Arrivals', () => {
+                const schedules = [
+                    {'uid': 'A12345'}
+                ];
+
+                const board = new StationBoard(schedules, direction.ARRIVALS)
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('uid');
+            });
         });
 
-        it('should have a category', () => {
-            expect(true).to.be.false;
+        describe('Should have a category', () => {
+            it('Departures', () => {
+                const schedules = [
+                    {'train_category': 'XX'}
+                ];
+
+                const board = new StationBoard(schedules, direction.DEPARTURES)
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('category');
+            });
+
+            it('Arrivals', () => {
+                const schedules = [
+                    {'train_category': 'XX'}
+                ];
+
+                const board = new StationBoard(schedules, direction.ARRIVALS)
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('category');
+            });
         });
         
-        it('should have a platform', () => {
-            expect(true).to.be.false;
-        })
+        describe('Should have a platform', () => {
+            it('Departures', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', platform: '1'},
+                        {'tiploc': 'GHIJKL', platform: '2'},
+                        {'tiploc': 'MNOPQU', platform: '3'},
+                    ]}
+                ];
+
+                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('platform');
+            });
+
+            it('Arrivals', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', platform: '1'},
+                        {'tiploc': 'GHIJKL', platform: '2'},
+                        {'tiploc': 'MNOPQU', platform: '3'},
+                    ]}
+                ];
+
+                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('platform');
+            });
+        });
     });
 
     describe('Departures', () => {
