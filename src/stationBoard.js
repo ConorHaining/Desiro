@@ -41,6 +41,7 @@ class StationBoard {
                         this.getJourneyPublicTime(record, i);
                         this.getJourneyPredictedTime(record, i);
                         this.getJourneyActualTime(record, i);
+                        this.getIfJoruneyCancelled(record, i);
                     });
                 }
             } catch (error) {
@@ -118,6 +119,14 @@ class StationBoard {
         if(this.tiploc === recordTiploc && record[actualTimeKey] !== undefined) {
             this.board[i][actualTimeKey] = record[actualTimeKey];
         }
+    }
+
+    getIfJoruneyCancelled(record, i) {
+        if(record['MVTCancel'] !== undefined) {
+            this.board[i]['cancelled'] = true;
+            this.board[i]['cancelCode'] = record['MVTCancel']['canx_reason_code'];
+        }
+
     }
 }
 

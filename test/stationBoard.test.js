@@ -264,4 +264,55 @@ describe('Station Boards', function() {
         });
     });
 
+    describe('Cancellation', () => {
+        it('should not contain a cancellation when there is no cancel movement', () => {
+            const schedules = [
+                {'location_records': [
+                    {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                    {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                    {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                ]}
+            ];
+
+            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                          .createBoard();
+
+            expect(board).have.lengthOf(1);
+            expect(board[0]).to.not.include.any.keys('cancelled', 'cancelCode');
+        });
+
+        it('should contain a cancellation when there is cancel movement', () => {
+            const schedules = [
+                {'location_records': [
+                    {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                    {'tiploc': 'GHIJKL', 'type': 'LI', 'MVTCancel': {'canx_reason_code': 'XX'}, location: [{'name': 'Station 2'}]},
+                    {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                ]}
+            ];
+
+            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                            .createBoard();
+
+            expect(board).have.lengthOf(1);
+            expect(board[0]).to.include.any.keys('cancelled');
+        });
+
+        it('should contain the cancellation code', () => {
+            const schedules = [
+                {'location_records': [
+                    {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                    {'tiploc': 'GHIJKL', 'type': 'LI', 'MVTCancel': {'canx_reason_code': 'XX'}, location: [{'name': 'Station 2'}]},
+                    {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                ]}
+            ];
+
+            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                            .createBoard();
+
+            expect(board).have.lengthOf(1);
+            expect(board[0]).to.include.any.keys('cancelCode');
+        });
+
+    });
+
 });
