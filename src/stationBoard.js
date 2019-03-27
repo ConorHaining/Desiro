@@ -86,11 +86,7 @@ class StationBoard {
 
         if(record['type'] === recordType) {
             const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
-            if(record['location'][0] !== undefined) {
-                this.board[i][locationKey] = record['location'][0]['name'];
-            } else {
-                this.board[i][locationKey] = null;
-            }
+            this.board[i][locationKey] = record['location'][0]['name'];
         }
     }
 

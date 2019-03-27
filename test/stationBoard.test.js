@@ -8,7 +8,7 @@ describe('Station Boards', function() {
     it('should throw an error when given a weird direction', () => {
         const boardFnc = () => {new StationBoard({}, 4)};
         expect(boardFnc).to.throw(Error);
-    })
+    });
 
     describe('Standard Keys', () => {
         describe('Should have an operator', () => {
@@ -125,21 +125,24 @@ describe('Station Boards', function() {
     });
 
     describe('Departures', () => {
-        it('should contain a destination', () => {
-            const schedules = [
-                {'location_records': [
-                    {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
-                    {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
-                    {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
-                ]}
-            ];
-
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
-                          .createBoard();
-
-            expect(board).have.lengthOf(1);
-            expect(board[0]).to.include.any.keys('destination');
-            expect(board[0]['destination']).to.equal('Station 3');
+        
+        describe('Destination', () => {
+            it('should contain a single destination', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.equal('Station 3');
+            });
         });
 
         it('should contain only a public departure when no predictions are made, or actual movements have happened', () => {
@@ -195,21 +198,24 @@ describe('Station Boards', function() {
     });
 
     describe('Arrivals', () => {
-        it('should contain a origin', () => {
-            const schedules = [
-                {'location_records': [
-                    {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
-                    {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
-                    {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
-                ]}
-            ];
-
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
-                          .createBoard();
-
-            expect(board).have.lengthOf(1);
-            expect(board[0]).to.include.any.keys('origin');
-            expect(board[0]['origin']).to.equal('Station 1');
+        
+        describe('Origin', () => {
+            it('should contain a single origin', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('origin');
+                expect(board[0]['origin']).to.equal('Station 1');
+            });
         });
 
         it('should contain only a public arrival when no predictions are made, or actual movements have happened', () => {

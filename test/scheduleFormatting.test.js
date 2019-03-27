@@ -267,31 +267,4 @@ describe('Schedules', function() {
         });
     });
     
-    describe('Proper Case', function(){
-
-        it('should returned a proper case string from upper case string', () =>{
-            const string = 'THE NEXT STOP IS STIRLING';
-            const result = scheduleFormatting.toProperCase(string);
-            expect(result).to.equal('The Next Stop Is Stirling');
-        });
-
-        it('should return a proper case string from a lower case', () => {
-            const string = 'the next stop is stirling';
-            const result = scheduleFormatting.toProperCase(string);
-            expect(result).to.equal('The Next Stop Is Stirling');
-        });
-
-        it('should return a proper case string from a mixed case string', () => {
-            const string = 'thE NeXT STop iS sTiRLINg';
-            const result = scheduleFormatting.toProperCase(string);
-            expect(result).to.equal('The Next Stop Is Stirling');
-        });
-
-        it('should return a proper case string from a proper case string', () => {
-            const string = 'The Next Stop Is Stirling';
-            const result = scheduleFormatting.toProperCase(string);
-            expect(result).to.equal('The Next Stop Is Stirling');
-        });
-
-    });
 });
