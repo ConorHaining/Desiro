@@ -28,6 +28,10 @@ class StationBoard {
             if(schedule['location_records'] !== undefined){
                 schedule['location_records'].forEach(record => {
                     this.getJourneyPlatform(record, i);
+                    this.getJourneyLocation(record, i);
+                    this.getJourneyPublicTime(record, i);
+                    this.getJourneyPredictedTime(record, i);
+                    this.getJourneyActualTime(record, i);
                 });
             }
         });
@@ -68,6 +72,33 @@ class StationBoard {
         if(record['type'] === recordType) {
             const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
             this.board[i][locationKey] = record['location'][0]['name'];
+        }
+    }
+
+    getJourneyPublicTime(record, i) {
+        const publicTimeKey = (this.direction == d.ARRIVALS) ?  'public_arrival' : 'public_departure';
+        const recordTiploc = record['tiploc'];
+
+        if(this.tiploc === recordTiploc) {
+            this.board[i][publicTimeKey] = record[publicTimeKey];
+        }
+    }
+
+    getJourneyPredictedTime(record, i) {
+        const predictedTimeKey = (this.direction == d.ARRIVALS) ?  'predicted_arrival' : 'predicted_departure';
+        const recordTiploc = record['tiploc'];
+
+        if(this.tiploc === recordTiploc && record[predictedTimeKey] !== undefined) {
+            this.board[i][predictedTimeKey] = record[predictedTimeKey];
+        }
+    }
+
+    getJourneyActualTime(record, i) {
+        const actualTimeKey = (this.direction == d.ARRIVALS) ?  'actual_arrival' : 'actual_departure';
+        const recordTiploc = record['tiploc'];
+
+        if(this.tiploc === recordTiploc && record[actualTimeKey] !== undefined) {
+            this.board[i][actualTimeKey] = record[actualTimeKey];
         }
     }
 }
