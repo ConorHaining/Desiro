@@ -1,10 +1,18 @@
 const d = require('../data/direction.js');
 
 class StationBoard {
-    // schedules;
-    // direction;
 
-    // board;
+    static fromPromise(schedules, direction, tiploc) {
+        return new Promise((resolve, reject) => {
+            tiploc.then(t => {
+                try {
+                    resolve(new StationBoard(schedules, direction, t).createBoard());
+                } catch (error) {
+                    reject({message: 'Station Board Error', status: 500, details: error.message, schedule: error.schedule});
+                }
+            })
+        });
+    }
 
     constructor(schedules, direction, tiploc) {
         this.schedules = schedules;
@@ -19,20 +27,26 @@ class StationBoard {
 
     createBoard() {
         this.schedules.forEach((schedule, i) => {
-            this.board.push({});
+            try {
+                this.board.push({});
 
-            this.getJourneyOperator(schedule, i);
-            this.getJourneyUID(schedule, i);
-            this.getJourneyCategory(schedule, i);
-            
-            if(schedule['location_records'] !== undefined){
-                schedule['location_records'].forEach(record => {
-                    this.getJourneyPlatform(record, i);
-                    this.getJourneyLocation(record, i);
-                    this.getJourneyPublicTime(record, i);
-                    this.getJourneyPredictedTime(record, i);
-                    this.getJourneyActualTime(record, i);
-                });
+                this.getJourneyOperator(schedule, i);
+                this.getJourneyUID(schedule, i);
+                this.getJourneyCategory(schedule, i);
+                
+                if(schedule['location_records'] !== undefined){
+                    schedule['location_records'].forEach(record => {
+                        this.getJourneyPlatform(record, i);
+                        this.getJourneyLocation(record, i);
+                        this.getJourneyPublicTime(record, i);
+                        this.getJourneyPredictedTime(record, i);
+                        this.getJourneyActualTime(record, i);
+                    });
+                }
+            } catch (error) {
+                let err = new Error(`${error.message} | Error for schedule ${schedule['uid']}`);
+                err.schedule = schedule;
+                throw err;
             }
         });
 
@@ -46,7 +60,7 @@ class StationBoard {
     }
 
     getJourneyUID(schedule, i) {
-        const UID = schedule['train_category'];
+        const UID = schedule['uid'];
 
         this.board[i]['uid'] = UID;
     }
@@ -71,7 +85,11 @@ class StationBoard {
 
         if(record['type'] === recordType) {
             const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
-            this.board[i][locationKey] = record['location'][0]['name'];
+            if(record['location'][0] !== undefined) {
+                this.board[i][locationKey] = record['location'][0]['name'];
+            } else {
+                this.board[i][locationKey] = null;
+            }
         }
     }
 

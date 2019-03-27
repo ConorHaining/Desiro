@@ -11,6 +11,7 @@ const associationFormatting = require('../src/associationFormatting.js');
 const movementQuerying = require('../src/movementQuerying.js');
 const movementFormatting = require('../src/movementFormatting.js');
 const elasticFormatting = require('../src/elasticFormatting.js');
+const stationBoard = require('../src/stationBoard.js');
 const direction = require('../data/direction.js');
 
 router.get(
@@ -55,7 +56,7 @@ router.get(
                 .then(schedules => associationFormatting.filterValidRunningDaysFromSchedules(schedules, time))
                 .then(schedules => associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules))
                 .then(schedules => scheduleQuerying.getAssociationSchedules(schedules, time))
-                .then(schedules => scheduleFormatting.createStationBoard(schedules, directionMode, crs))
+                .then(schedules => stationBoard.fromPromise(schedules, directionMode, Promise.resolve(tiploc)))
                 .then(board => res.send(board))
                 .catch(err => res.status(500).send(err));
         } else {
