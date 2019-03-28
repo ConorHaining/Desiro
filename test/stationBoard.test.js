@@ -143,6 +143,105 @@ describe('Station Boards', function() {
                 expect(board[0]).to.include.any.keys('destination');
                 expect(board[0]['destination']).to.equal('Station 3');
             });
+
+            it('should contain an array of destinations if there is one association', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.have.lengthOf(2);
+                expect(board[0]['destination']).to.have.members(['Station 3', 'Station 5']);
+            });
+
+            it('should contain an array of destinations if there is two associations', () => {
+                const schedules = [
+                    {
+                        'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 7'}]},
+                            ],
+                        },
+                        ]
+                    }
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.have.lengthOf(3);
+                expect(board[0]['destination']).to.have.members(['Station 3', 'Station 5', 'Station 7']);
+            });
+
+            it('should contain an array of destinations if there is three association', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 7'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 8'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 9'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.have.lengthOf(4);
+                expect(board[0]['destination']).to.have.members(['Station 3', 'Station 5', 'Station 7', 'Station 9']);
+            });
+
         });
 
         it('should contain only a public departure when no predictions are made, or actual movements have happened', () => {
@@ -215,6 +314,104 @@ describe('Station Boards', function() {
                 expect(board).have.lengthOf(1);
                 expect(board[0]).to.include.any.keys('origin');
                 expect(board[0]['origin']).to.equal('Station 1');
+            });
+
+            it('should contain an array of origins if there is one association', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('origin');
+                expect(board[0]['origin']).to.have.lengthOf(2);
+                expect(board[0]['origin']).to.have.members(['Station 1', 'Station 4']);
+            });
+
+            it('should contain an array of origins if there is two associations', () => {
+                const schedules = [
+                    {
+                        'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 7'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                        ]
+                    }
+                ];
+    
+                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('origin');
+                expect(board[0]['origin']).to.have.lengthOf(3);
+                expect(board[0]['origin']).to.have.members(['Station 1', 'Station 4', 'Station 6']);
+            });
+
+            it('should contain an array of origins if there is three association', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 7'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                        {'location_records': [
+                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 8'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 9'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('origin');
+                expect(board[0]['origin']).to.have.lengthOf(4);
+                expect(board[0]['origin']).to.have.members(['Station 1', 'Station 4', 'Station 6', 'Station 8']);
             });
         });
 

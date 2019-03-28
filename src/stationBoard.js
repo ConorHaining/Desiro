@@ -35,7 +35,7 @@ class StationBoard {
                 this.getJourneyUID(schedule, i);
                 this.getJourneyCategory(schedule, i);
                 
-                if(schedule['location_records'] !== undefined){
+                if(schedule['location_records'] !== undefined) {
                     schedule['location_records'].forEach(record => {
                         this.getJourneyPlatform(record, i);
                         this.getJourneyLocation(record, i);
@@ -43,6 +43,14 @@ class StationBoard {
                         this.getJourneyPredictedTime(record, i);
                         this.getJourneyActualTime(record, i);
                         this.getIfJoruneyCancelled(record, i);
+                    });
+                }
+
+                if(schedule['associations'] !== undefined) {
+                    schedule['associations'].forEach(assocSchedule => {
+                        assocSchedule['location_records'].forEach(assocScheduleRecord => {
+                            this.getJourneyLocation(assocScheduleRecord, i);
+                        });
                     });
                 }
             } catch (error) {
@@ -84,10 +92,18 @@ class StationBoard {
 
     getJourneyLocation(record, i) {
         const recordType = (this.direction == d.ARRIVALS) ?  'LO' : 'LT';
+        const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
 
         if(record['type'] === recordType) {
-            const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
-            this.board[i][locationKey] = helper.toProperCase(record['location'][0]['name']);
+            if (typeof(this.board[i][locationKey]) === 'string') {
+                const currentLocation = this.board[i][locationKey];
+                this.board[i][locationKey] = [currentLocation];
+                this.board[i][locationKey].push(helper.toProperCase(record['location'][0]['name']));
+            } else if (Array.isArray(this.board[i][locationKey])) {
+                this.board[i][locationKey].push(helper.toProperCase(record['location'][0]['name']));
+            } else {
+                this.board[i][locationKey] = helper.toProperCase(record['location'][0]['name']);
+            }
         }
     }
 
