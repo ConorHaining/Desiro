@@ -1,4 +1,5 @@
 const d = require('../data/direction.js');
+const helper = require('./helpers.js');
 
 class StationBoard {
 
@@ -86,7 +87,7 @@ class StationBoard {
 
         if(record['type'] === recordType) {
             const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
-            this.board[i][locationKey] = record['location'][0]['name'];
+            this.board[i][locationKey] = helper.toProperCase(record['location'][0]['name']);
         }
     }
 
