@@ -186,7 +186,7 @@ module.exports = {
       schedules = schedules.map(async(schedule) => {
         const uid = schedule['uid'];
         if('associations' in schedule){
-          const associations = schedule['associations'];
+          const associations = schedule['associations'][0];
           
           let searchUID;
           if(associations['main_train'] === uid){
@@ -234,11 +234,10 @@ module.exports = {
         
           validSchedule = scheduleFormatting.filterValidSTPIndicators(results);
           if(!validSchedule['signalling_id'].startsWith('5')){
-            schedule['associations'] = validSchedule;
+            schedule['associations'] = [validSchedule];
           } else {
             delete schedule['associations'];
           }
-
         }
         return schedule;
       });
