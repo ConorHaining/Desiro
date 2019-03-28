@@ -127,109 +127,427 @@ describe('Associations', function() {
          * 
          */
     
-        it('should return the WTT(P) schedule if there is no VAR(O) or CAN(C)', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'P'
-                }
-            ];
-
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'P');
-        });
+        describe('Singular', () => {
+            it('should return the WTT(P) schedule if there is no VAR(O) or CAN(C)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'P');
+                expect(association).to.have.lengthOf(1);
+            });
+            
+            it('should return the VAR(0) schedule if there is one present and no CAN(C) with the WTT', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'O');
+                expect(association).to.have.lengthOf(1);
+            });
         
-        it('should return the VAR(0) schedule if there is one present and no CAN(C) with the WTT', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'P'
-                },
-                {
-                    'stp_indicator': 'O'
-                }
-            ];
-
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'O');
-        });
+            it('should return the CAN(C) schedule if there is one present with the WTT, and no VAR (O)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    }
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
     
-        it('should return the CAN(C) schedule if there is one present with the WTT, and no VAR (O)', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'P'
-                },
-                {
-                    'stp_indicator': 'C'
-                }
-            ];
-            
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'C');
-        });
-
-        it('should return the CAN(C) schedule if there is one present with the WTT, and with VAR (O)', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'P'
-                },
-                {
-                    'stp_indicator': 'C'
-                },
-                {
-                    'stp_indicator': 'O'
-                },
-            ];
-            
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'C');
-        });
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(1);
+            });
     
-        it('should return the STP(N) schedule if there is no CAN(C)', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'N'
-                }
-            ];
-
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'N');
-        });
+            it('should return the CAN(C) schedule if there is one present with the WTT, and with VAR (O)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
     
-        it('should return the CAN(C) schedule if there is one present with the STP', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'N'
-                },
-                {
-                    'stp_indicator': 'C'
-                }
-            ];
-            
-            let association = associationFormatting.filterValidSTPIndicators(associations);
-
-            expect(association).to.have.property('stp_indicator', 'C');
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(1);
+            });
+        
+            it('should return the STP(N) schedule if there is no CAN(C)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'N');
+                expect(association).to.have.lengthOf(1);
+            });
+        
+            it('should return the CAN(C) schedule if there is one present with the STP', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    }
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(1);
+            });
+    
+            it('should return correct schedule regardless of order', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(1);
+            });
         });
 
-        it('should return correct schedule regardless of order', () => {
-            let associations = [
-                {
-                    'stp_indicator': 'C'
-                },
-                {
-                    'stp_indicator': 'O'
-                },
-                {
-                    'stp_indicator': 'P'
-                },
-            ];
+        describe('Multiple', () => {
+            it('should return the WTT(P) schedules if there is no VAR(O) or CAN(C)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'P');
+                expect(association[1]).to.have.property('stp_indicator', 'P');
+                expect(association).to.have.lengthOf(2);
+            });
             
-            let association = associationFormatting.filterValidSTPIndicators(associations);
+            it('should return the VAR(0) schedules if there is one present and no CAN(C) with the WTT', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'O');
+                expect(association[1]).to.have.property('stp_indicator', 'O');
+                expect(association).to.have.lengthOf(2);
+            });
 
-            expect(association).to.have.property('stp_indicator', 'C');
+            it('should return one VAR(0) schedule and one WWT(P) if there is one present and no CAN(C) with the WTT', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'P');
+                expect(association[1]).to.have.property('stp_indicator', 'O');
+                expect(association).to.have.lengthOf(2);
+            });
+        
+            it('should return the CAN(C) schedules if there is one present with the WTT, and no VAR (O)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association[1]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(2);
+            });
+    
+            it('should return the CAN(C) schedules if there is one present with the WTT, and with VAR (O)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association[1]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(2);
+            });
+
+            it('should return one CAN(C) schedule and one VAR(0) schedule if there is one present with the WTT, and with VAR (O)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association[1]).to.have.property('stp_indicator', 'O');
+                expect(association).to.have.lengthOf(2);
+            });
+        
+            it('should return the STP(N) schedules if there is no CAN(C)', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+    
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'N');
+                expect(association[1]).to.have.property('stp_indicator', 'N');
+                expect(association).to.have.lengthOf(2);
+            });
+        
+            it('should return the CAN(C) schedules if there is one present with the STP', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'N',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association[1]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(2);
+            });
+    
+            it('should return correct schedules regardless of order', () => {
+                let associations = [
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'B12345'
+                    },
+                    {
+                        'stp_indicator': 'C',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'O',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    },
+                    {
+                        'stp_indicator': 'P',
+                        'main_train': 'A12345',
+                        'assoc_train': 'C12345'
+                    }
+                ];
+                
+                let association = associationFormatting.filterValidSTPIndicators(associations);
+    
+                expect(association[0]).to.have.property('stp_indicator', 'C');
+                expect(association[1]).to.have.property('stp_indicator', 'C');
+                expect(association).to.have.lengthOf(2);
+            });
         });
     
     });
@@ -247,7 +565,7 @@ describe('Associations', function() {
             ];
 
             let validSchedules = await associationFormatting.filterValidSTPIndicatorsFromSchedules(schedules);
-            expect(validSchedules[0]['associations']).to.be.an('object');
+            expect(validSchedules[0]['associations']).to.be.an('array');
         });
 
         it('should resolve when not given an array of associations', async () => {

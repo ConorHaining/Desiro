@@ -16,7 +16,6 @@ module.exports = {
     },
     
     filterValidRunningDays: (association, when) => {
-        console.log(when.weekday)
         let runningDayIndex = when.weekday - 1;
         if(runningDayIndex < 0){
             runningDayIndex = 6;
@@ -42,29 +41,44 @@ module.exports = {
     
     filterValidSTPIndicators: (associations) => {
       
-        let validAssociation = associations[0];
+        let validAssociations = [];
+        let groupedAssociations = {};
 
-        for (let i = 0; i < associations.length; i++) {
-            const association = associations[i];
-            const associationSTP = association['stp_indicator'];
-            const validAssociationSTP = validAssociation['stp_indicator'];
-
-            if (
-                (associationSTP == 'P') ||
-                (validAssociationSTP == 'P' && (associationSTP == 'O' || associationSTP == 'C')) ||
-                (validAssociationSTP == 'O' && associationSTP == 'C') ||
-                (associationSTP == 'N') ||
-                (validAssociationSTP == 'N' && associationSTP == 'C')
-            ) {
-                validAssociation = association;
-                associations.splice(i, 1);
-                i = -1; 
-                continue;
+        associations.forEach(association => {
+            const uid = association['assoc_train'];
+            if(groupedAssociations[uid]){
+                groupedAssociations[uid].push(association); 
+            } else {
+                groupedAssociations[uid] = [association]; 
             }
-        }
-        
-        return validAssociation;
+        });
 
+        Object.values(groupedAssociations).forEach(group => {
+            let validAssociation = group[0];
+
+            for (let i = 0; i < group.length; i++) {
+                const association = group[i];
+                const associationSTP = association['stp_indicator'];
+                const validAssociationSTP = validAssociation['stp_indicator'];
+    
+                if (
+                    (associationSTP == 'P') ||
+                    (validAssociationSTP == 'P' && (associationSTP == 'O' || associationSTP == 'C')) ||
+                    (validAssociationSTP == 'O' && associationSTP == 'C') ||
+                    (associationSTP == 'N') ||
+                    (validAssociationSTP == 'N' && associationSTP == 'C')
+                ) {
+                    validAssociation = association;
+                    group.splice(i, 1);
+                    i = -1; 
+                    continue;
+                }
+            }
+
+            validAssociations.push(validAssociation);
+        });
+
+        return validAssociations;
     },
 
     discardNextAssociations: (association) => {
