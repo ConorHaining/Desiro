@@ -1,5 +1,6 @@
 const Direction = require('../data/direction.js');
 const { DateTime } = require('luxon');
+const helpers = require('./helpers.js');
 
 module.exports = {
     filterValidRunningDaysFromSchedules: (schedules, when) => {
@@ -101,122 +102,6 @@ module.exports = {
         });
     },
 
-    createStationBoard: (schedules, direction, crs) => {
-        return new Promise((resolve, reject) => {
-            let board = schedules.map(schedule => {
-                let record = {};
-                const association = schedule['associations'];
-                record['operator'] = schedule['atoc_code'];
-                record['uid'] = schedule['uid'];
-                record['category'] = schedule['train_category'];
-                const listOfCrs = schedule['location_records'].map(x => {
-                    if(x['location'].length === 1) {
-                        return x['location'][0]['crs'];
-                    }
-                });
-                
-                schedule['location_records'].forEach(item => {
-                    if(item['MVTCancel']){
-                        record['cancelled'] = true;
-                    }
-
-                    try {
-                        if(item['location'].length === 1) {
-                            if (item['location'][0]['crs'] == crs){
-                                let last = schedule['location_records'].pop()['location'][0];
-                                let first = schedule['location_records'].shift()['location'][0]
-                                console.log(last);
-                                console.log(first);
-                                record['platform'] = item['platform'];
-                                if (direction == Direction.DEPARTURES && item['MVTDEPARTURE'] === undefined) {
-                                    record['public_departure'] = item['public_departure'];
-                                    record['destination'] = module.exports.toProperCase(last['name']);
-                                } else if (direction == Direction.DEPARTURES && item['MVTDEPARTURE'] !== undefined) {
-                                    record['public_departure'] = item['public_departure'];
-                                    record['destination'] = module.exports.toProperCase(last['name']);
-    
-                                    if(item['MVTDEPARTURE']['actual_timestamp'] !== undefined){
-                                        record['actual_departure'] = DateTime.fromMillis(item['MVTDEPARTURE']['actual_timestamp']).toFormat('HH:mm');
-                                    } else {
-                                        record['predicted_departure'] = item['predicted_departure'];
-                                    }
-                                } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] === undefined) {
-                                    record['public_arrival'] = item['public_arrival'];
-                                    record['origin'] = module.exports.toProperCase(first['name']);
-                                } else if (direction == Direction.ARRIVALS && item['MVTARRIVAL'] !== undefined) {
-                                    record['public_arrival'] = item['public_arrival'];
-                                    record['origin'] = module.exports.toProperCase(first['name']);
-                                    
-                                    if(item['MVTARRIVAL']['actual_timestamp'] !== undefined){
-                                        record['actual_arrival'] = DateTime.fromMillis(item['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm');
-                                    } else {
-                                        record['predicted_arrival'] = item['predicted_arrival'];
-                                    }
-                                }
-                            }
-                        }
-                                if(association !== undefined) {
-                                    console.info(`UID ${schedule['uid']} | Association`)
-                                    let found = false;
-                                    const assocLocation = association['location_records'];
-                                    listOfAssocCrs = assocLocation.map(x => {
-                                        if(x['location'].length === 1) {
-                                            return x['location'][0]['crs'];
-                                        }
-                                    });
-                                    const split = listOfCrs.filter(value => (listOfAssocCrs.includes(value) && value !== null))[0];
-        
-                                    if(direction === Direction.DEPARTURES) {
-                                       if(listOfCrs.includes(crs) && !listOfAssocCrs.includes(crs)) {
-                                           console.log(listOfCrs.includes(crs) && !listOfAssocCrs.includes(crs))
-                                           found = true;
-                                       }
-                                       if(!listOfCrs.includes(crs) && listOfAssocCrs.includes(crs)) {
-                                           console.log(!listOfCrs.includes(crs) && listOfAssocCrs.includes(crs))
-                                           found = false;
-                                       }
-        
-                                       if(listOfCrs.indexOf(crs) > listOfCrs.indexOf(split)){
-                                           found = false;
-                                       }
-                                       try {
-                                           if (found) {
-                                               let lastAssoc = assocLocation.pop()['location'][0];
-                                               record['destination'] = `${module.exports.toProperCase(last['name'])} & ${module.exports.toProperCase(lastAssoc['name'])}`
-                                           }
-                                       } catch (error) {
-                                           reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
-                                       }
-        
-                                    } else if(direction == Direction.ARRIVALS){
-        
-                                        try {
-                                            if (found) {
-                                                let firstAssoc = assocLocation.shift()['location'][0];
-                                                record['origin'] = `${module.exports.toProperCase(first['name'])} & ${module.exports.toProperCase(firstAssoc['name'])}`
-                                            }
-                                        } catch (error) {
-                                            reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'uid': JSON.stringify(schedule)});
-                                        }
-                                    }
-                                    
-                                }
-                    } catch (error) {
-                        reject({'message': 'Station Board Error', 'status': 500, 'details': error.message, 'e': error});
-                    }
-    
-                }); 
-
-                return record;
-
-    
-            });
-    
-            resolve(board);
-    
-        });
-    },
-
     createJourneyBoard: (schedules) => {
         let schedule = schedules[0];
         let board = {
@@ -243,7 +128,7 @@ module.exports = {
                         predictedDeparture: record['predicted_departure'],
                         predictedArrival: record['predicted_arrival'],
                         station: {
-                            name: module.exports.toProperCase(record['location'][0]['name']),
+                            name: helpers.toProperCase(record['location'][0]['name']),
                             crs: record['location'][0]['crs']
                         }
                     }
