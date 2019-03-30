@@ -118,6 +118,12 @@ module.exports = {
                     if(record['MVTARRIVAL']) {
                         actualArrival = (record['MVTARRIVAL']['actual_timestamp']) ? DateTime.fromMillis(record['MVTARRIVAL']['actual_timestamp']).toFormat('HH:mm:ss'): null;
                     }
+                    if(record['MVTCancel']) {
+                        console.log(record['MVTCancel']);
+                        board['cancelled'] = true;
+                        board['cancelCode'] = record['MVTCancel']['cancel_reason_code'];
+                        board['cancelledAt'] = record['MVTCancel']['location_stanox'];
+                    }
 
                     return {
                         platform: record['platform'],
@@ -132,6 +138,7 @@ module.exports = {
                             crs: record['location'][0]['crs']
                         }
                     }
+
                 }
             }).filter(x => x != null);
             board['operator'] = schedule['atoc_code'];
