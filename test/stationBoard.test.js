@@ -498,13 +498,14 @@ describe('Station Boards', function() {
 
             expect(board).have.lengthOf(1);
             expect(board[0]).to.include.any.keys('cancelled');
+            expect(board[0]['cancelled']).to.be.true;
         });
 
         it('should contain the cancellation code', () => {
             const schedules = [
                 {'location_records': [
                     {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
-                    {'tiploc': 'GHIJKL', 'type': 'LI', 'MVTCancel': {'canx_reason_code': 'XX'}, location: [{'name': 'Station 2'}]},
+                    {'tiploc': 'GHIJKL', 'type': 'LI', 'MVTCancel': {'cancel_reason_code': 'XX'}, location: [{'name': 'Station 2'}]},
                     {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
                 ]}
             ];
@@ -514,6 +515,7 @@ describe('Station Boards', function() {
 
             expect(board).have.lengthOf(1);
             expect(board[0]).to.include.any.keys('cancelCode');
+            expect(board[0]['cancelCode']).to.not.be.undefined;
         });
 
     });

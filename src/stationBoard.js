@@ -137,7 +137,7 @@ class StationBoard {
     getIfJoruneyCancelled(record, i) {
         if(record['MVTCancel'] !== undefined) {
             this.board[i]['cancelled'] = true;
-            this.board[i]['cancelCode'] = record['MVTCancel']['canx_reason_code'];
+            this.board[i]['cancelCode'] = record['MVTCancel']['cancel_reason_code'];
         }
 
     }
