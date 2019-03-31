@@ -11,7 +11,7 @@ module.exports = {
             date = when.toFormat('dd/LL/yyyy');
 
             let query = {
-              "size": 200,
+              "size": 1000,
               "query": {
                 "bool": {
                   "must": [
@@ -91,83 +91,95 @@ module.exports = {
         });
     },
 
-    getUIDsForTiploc: (tiploc, when) => {
+    getUIDsForTiploc: (tiplocs, when) => {
 
       return new Promise((resolve, reject) => {
         startTime = when.toFormat('HH:mm');
         endTime = when.plus({ hours: 2 }).toFormat('HH:mm');
         date = when.toFormat('dd/LL/yyyy');
 
-        ES.search({
-          index: 'schedule',
-          body: {
-            "_source": {
-              "includes": "uid"
-            }, 
-            "size": 500,
-            "query": {
-              "bool": {
-                "must": [
-                  {
-                    "nested": {
-                      "path": "location_records",
-                      "query": {
-                        "bool": {
-                          "must": [
-                            {
-                              "bool": {
-                                "should": [
-                                  {
-                                    "range": {
-                                      "location_records.public_arrival": {
-                                        "format": "HH:mm",
-                                        "gte": startTime,
-                                        "lte": endTime
-                                      }
-                                    }
-                                  },
-                                  {
-                                    "range": {
-                                      "location_records.public_departure": {
-                                        "format": "HH:mm",
-                                        "gte": startTime,
-                                        "lte": endTime
-                                      }
+        let query = {
+          "_source": {
+            "includes": "uid"
+          }, 
+          "size": 1000,
+          "query": {
+            "bool": {
+              "must": [
+                {
+                  "nested": {
+                    "path": "location_records",
+                    "query": {
+                      "bool": {
+                        "must": [
+                          {
+                            "bool": {
+                              "should": [
+                                {
+                                  "range": {
+                                    "location_records.public_arrival": {
+                                      "format": "HH:mm",
+                                      "gte": startTime,
+                                      "lte": endTime
                                     }
                                   }
-                                ]
-                              }
-                            },
-                            {
-                              "term": {
-                                "location_records.tiploc": tiploc
-                              }
+                                },
+                                {
+                                  "range": {
+                                    "location_records.public_departure": {
+                                      "format": "HH:mm",
+                                      "gte": startTime,
+                                      "lte": endTime
+                                    }
+                                  }
+                                }
+                              ]
                             }
-                          ]
-                        }
-                      }
-                    }
-                  },
-                  {
-                    "range": {
-                      "start_date": {
-                        "lte": date,
-                        "format": "d/M/y"
-                      }
-                    }
-                  },
-                  {
-                    "range": {
-                      "end_start": {
-                        "gte": date,
-                        "format": "d/M/y"
+                          },
+                          {
+                            "bool": {
+                              "should": [
+                                
+                              ]
+                            }
+                          }
+                        ]
                       }
                     }
                   }
-                ]
-              }
+                },
+                {
+                  "range": {
+                    "start_date": {
+                      "lte": date,
+                      "format": "d/M/y"
+                    }
+                  }
+                },
+                {
+                  "range": {
+                    "end_start": {
+                      "gte": date,
+                      "format": "d/M/y"
+                    }
+                  }
+                }
+              ]
             }
           }
+        };
+
+        query['query']['bool']['must'][0]['nested']['query']['bool']['must'][1]['bool']['should'] = tiplocs.map(tiploc => {
+          return {
+            "term": {
+              "location_records.tiploc": tiploc
+            }
+          }
+        });
+
+        ES.search({
+          index: 'schedule',
+          body: query
         }).then((body) => {
           const UIDs = new Set();
           body.hits.hits.forEach(hit => {
