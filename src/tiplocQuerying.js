@@ -6,8 +6,14 @@ module.exports = {
         return new Promise((resolve, reject) => {
             // There are some special cases, notably major stations, we will handle those before searching
             switch(crs) {
-                case 'VIC':
-                    resolve('VICTRIC');
+                case 'VIC': // London Victoria
+                    resolve(['VICTRIA', 'VICTRIC', 'VICTRIE']);
+                case 'CLJ': // Clapham Junction
+                    resolve(['CLPHMJ1', 'CLPHMJ2', 'CLPHMJC', 'CLPHMJM', 'CLPHMJN', 'CLPHMJW']);
+                case 'LBG': // London Bridge
+                    resolve(['LNDNBDC', 'LNDNBDE', 'LNDNBDG']);
+                case 'WAT':
+                    resolve(['WATR', 'WATRINT', 'WATRLMN', 'WATRLOO', 'WATRLOW']);
                 break;
             }
             ES.search({
@@ -20,10 +26,13 @@ module.exports = {
                     }
                   }
             }).then((body) => {
-                if (body.hits.total >= 1){
+                if (body.hits.total > 0){
                     let result = body.hits.hits;
-                    tiploc = result[0]._source.code;
-                    resolve(tiploc);
+                    let tiplocs = result.map(tiploc => {
+                        return tiploc._source.code;
+                    });
+
+                    resolve(tiplocs);
                 } else {
                     reject({'message': `Station ${crs} not found`, 'status': 404});
                 }
