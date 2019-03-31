@@ -216,7 +216,7 @@ module.exports = {
                     {
                       "range": {
                         "start_date": {
-                          "lte": "12/03/2019",
+                          "lte": date,
                           "format": "d/M/y"
                         }
                       }
@@ -224,7 +224,7 @@ module.exports = {
                     {
                       "range": {
                         "end_start": {
-                          "gte": "12/03/2019",
+                          "gte": date,
                           "format": "d/M/y"
                         }
                       }
