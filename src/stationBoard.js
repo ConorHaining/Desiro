@@ -1,5 +1,6 @@
 const d = require('../data/direction.js');
 const helper = require('./helpers.js');
+const { DateTime } = require('luxon');
 
 class StationBoard {
 
@@ -111,8 +112,10 @@ class StationBoard {
         const publicTimeKey = (this.direction == d.ARRIVALS) ?  'public_arrival' : 'public_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc === recordTiploc) {
+        if(this.tiploc === recordTiploc && record[publicTimeKey] !== undefined) {
             this.board[i][publicTimeKey] = record[publicTimeKey];
+            this.board[i][publicTimeKey] = DateTime.fromFormat(record[publicTimeKey], 'HH:mm:ss')
+                                                        .toFormat('HH:mm');
         }
     }
 
@@ -126,11 +129,15 @@ class StationBoard {
     }
 
     getJourneyActualTime(record, i) {
-        const actualTimeKey = (this.direction == d.ARRIVALS) ?  'actual_arrival' : 'actual_departure';
+        const actualTimeKey = (this.direction == d.ARRIVALS) ?  'MVTARRIVAL' : 'MVTDEPARTURE';
+        const actualTimeBoardKey = (this.direction == d.ARRIVALS) ?  'actual_arrival' : 'actual_departure';
         const recordTiploc = record['tiploc'];
 
         if(this.tiploc === recordTiploc && record[actualTimeKey] !== undefined) {
-            this.board[i][actualTimeKey] = record[actualTimeKey];
+            if(record[actualTimeKey]['actual_timestamp'] !== undefined) {
+                this.board[i][actualTimeBoardKey] = DateTime.fromMillis(record[actualTimeKey]['actual_timestamp'])
+                                                    .toFormat('HH:mm');
+            }
         }
     }
 
