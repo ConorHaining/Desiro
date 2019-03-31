@@ -85,7 +85,7 @@ class StationBoard {
     getJourneyPlatform(record, i) {
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc === recordTiploc){
+        if(this.tiploc.includes(recordTiploc)){
             this.board[i]['platform'] = record['platform'];
         }
 
