@@ -88,11 +88,13 @@ module.exports = {
                     const location_records = schedule['location_records'];
                     let found = false;
                     
-                    location_records.forEach(record => {
-                        if(record['tiploc'] === tiploc && field in record) {
-                            found = true;
-                        }
-                    });
+                    if(location_records !== undefined) {
+                        location_records.forEach(record => {
+                            if(tiploc.includes(record['tiploc']) && field in record) {
+                                found = true;
+                            }
+                        });
+                    }
                     
                     return found;
                 });
