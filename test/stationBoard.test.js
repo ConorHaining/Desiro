@@ -247,9 +247,9 @@ describe('Station Boards', function() {
         it('should contain only a public departure when no predictions are made, or actual movements have happened', () => {
             const schedules = [
                 {'location_records': [
-                    {'tiploc': 'ABCDEF', 'public_departure': '12:00',},
-                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05'},
-                    {'tiploc': 'MNOPQU', 'public_arrival': '12:10'},
+                    {'tiploc': 'ABCDEF', 'public_departure': '12:00:00',},
+                    {'tiploc': 'GHIJKL', 'public_departure': '12:06:00', 'public_arrival': '12:05:00'},
+                    {'tiploc': 'MNOPQU', 'public_arrival': '12:10:00'},
                 ]}
             ];
 
@@ -281,8 +281,8 @@ describe('Station Boards', function() {
         it('should contain a public departure and an actual departure but no predicted departure', () => {
             const schedules = [
                 {'location_records': [
-                    {'tiploc': 'ABCDEF', 'public_departure': '12:00', 'actual_departure': '12:01'},
-                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05', 'actual_arrival': '12:06', 'actual_departure': '12:07'},
+                    {'tiploc': 'ABCDEF', 'public_departure': '12:00', 'MVTDEPARTURE': {'actual_timestamp': 1553169660000},},
+                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05', 'MVTARRIVAL': {'actual_timestamp': 1553169960000}, 'MVTDEPARTURE': {'actual_timestamp': 1553170020000},},
                     {'tiploc': 'MNOPQU', 'public_arrival': '12:10', 'predicted_arrival': '12:11'},
                 ]}
             ];
@@ -418,9 +418,9 @@ describe('Station Boards', function() {
         it('should contain only a public arrival when no predictions are made, or actual movements have happened', () => {
             const schedules = [
                 {'location_records': [
-                    {'tiploc': 'ABCDEF', 'public_departure': '12:00',},
-                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05'},
-                    {'tiploc': 'MNOPQU', 'public_arrival': '12:10'},
+                    {'tiploc': 'ABCDEF', 'public_departure': '12:00:00',},
+                    {'tiploc': 'GHIJKL', 'public_departure': '12:06:00', 'public_arrival': '12:05:00'},
+                    {'tiploc': 'MNOPQU', 'public_arrival': '12:10:00'},
                 ]}
             ];
 
@@ -452,11 +452,12 @@ describe('Station Boards', function() {
         it('should contain a public arrival and an actual arrival but no predicted arrival', () => {
             const schedules = [
                 {'location_records': [
-                    {'tiploc': 'ABCDEF', 'public_departure': '12:00', 'actual_departure': '12:01'},
-                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05', 'actual_arrival': '12:06', 'actual_departure': '12:07'},
+                    {'tiploc': 'ABCDEF', 'public_departure': '12:00', 'MVTDEPARTURE': {'actual_timestamp': 1553169660000},},
+                    {'tiploc': 'GHIJKL', 'public_departure': '12:06', 'public_arrival': '12:05', 'MVTARRIVAL': {'actual_timestamp': 1553169960000}, 'MVTDEPARTURE': {'actual_timestamp': 1553170020000},},
                     {'tiploc': 'MNOPQU', 'public_arrival': '12:10', 'predicted_arrival': '12:11'},
                 ]}
             ];
+
 
             const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
                           .createBoard();
