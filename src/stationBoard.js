@@ -112,7 +112,7 @@ class StationBoard {
         const publicTimeKey = (this.direction == d.ARRIVALS) ?  'public_arrival' : 'public_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc === recordTiploc && record[publicTimeKey] !== undefined) {
+        if(this.tiploc.includes(recordTiploc) && record[publicTimeKey] !== undefined) {
             this.board[i][publicTimeKey] = record[publicTimeKey];
             this.board[i][publicTimeKey] = DateTime.fromFormat(record[publicTimeKey], 'HH:mm:ss')
                                                         .toFormat('HH:mm');
@@ -123,7 +123,7 @@ class StationBoard {
         const predictedTimeKey = (this.direction == d.ARRIVALS) ?  'predicted_arrival' : 'predicted_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc === recordTiploc && record[predictedTimeKey] !== undefined) {
+        if(this.tiploc.includes(recordTiploc) && record[predictedTimeKey] !== undefined) {
             this.board[i][predictedTimeKey] = record[predictedTimeKey];
         }
     }
@@ -133,7 +133,7 @@ class StationBoard {
         const actualTimeBoardKey = (this.direction == d.ARRIVALS) ?  'actual_arrival' : 'actual_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc === recordTiploc && record[actualTimeKey] !== undefined) {
+        if(this.tiploc.includes(recordTiploc) && record[actualTimeKey] !== undefined) {
             if(record[actualTimeKey]['actual_timestamp'] !== undefined) {
                 this.board[i][actualTimeBoardKey] = DateTime.fromMillis(record[actualTimeKey]['actual_timestamp'])
                                                     .toFormat('HH:mm');
