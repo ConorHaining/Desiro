@@ -138,7 +138,8 @@ class StationBoard {
         tiplocList.forEach((journey, j) => {
             if(journey !== undefined) {
                 const tiplocs = journey.map(record => {return record['tiploc']});
-                if(tiplocs.includes(this.tiploc)) {
+                const intersection = this.tiploc.filter(value => -1 !== tiplocs.indexOf(value));
+                if(intersection.length > 0) {
                     let locationRecord;
                     if (this.direction == d.ARRIVALS) {
                         locationRecord = journey.shift();
