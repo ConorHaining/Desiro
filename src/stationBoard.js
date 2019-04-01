@@ -30,6 +30,7 @@ class StationBoard {
     createBoard() {
         this.schedules.forEach((schedule, i) => {
             try {
+                let tiplocList = this.reconstructFullJourney(schedule);
                 this.board.push({});
 
                 this.getJourneyOperator(schedule, i);
@@ -39,7 +40,6 @@ class StationBoard {
                 if(schedule['location_records'] !== undefined) {
                     schedule['location_records'].forEach(record => {
                         this.getJourneyPlatform(record, i);
-                        this.getJourneyLocation(record, i);
                         this.getJourneyPublicTime(record, i);
                         this.getJourneyPredictedTime(record, i);
                         this.getJourneyActualTime(record, i);
@@ -47,13 +47,8 @@ class StationBoard {
                     });
                 }
 
-                if(schedule['associations'] !== undefined) {
-                    schedule['associations'].forEach(assocSchedule => {
-                        assocSchedule['location_records'].forEach(assocScheduleRecord => {
-                            this.getJourneyLocation(assocScheduleRecord, i);
-                        });
-                    });
-                }
+                this.getJourneyLocation(tiplocList, i);
+
             } catch (error) {
                 let err = new Error(`${error.message} | Error for schedule ${schedule['uid']}`);
                 err.schedule = schedule;
@@ -62,6 +57,52 @@ class StationBoard {
         });
 
         return this.board;
+    }
+
+    reconstructFullJourney(schedule) {
+        let journeys = [];
+        if(schedule['associations'] !== undefined && schedule['location_records'] !== undefined) {
+            let actvityPoint = {};
+            for (let i = 0; i < schedule['associations'].length; i++) {
+                const association = schedule['associations'][i];
+                journeys.push(association['location_records']);
+                for (let j = 0; j < association['location_records'].length; j++) {
+                    const assocRecord = association['location_records'][j];
+                    
+                    for (let k = 0; k < schedule['location_records'].length; k++) {
+                        const record = schedule['location_records'][k];
+                        if (record['tiploc'] == assocRecord['tiploc']) {
+                            actvityPoint = record;
+                        }
+                    }
+                }
+            }
+
+            journeys = journeys.map(journey => {
+                let index = journey.findIndex(record => {
+                    return record['tiploc'] == actvityPoint['tiploc'];
+                });
+
+                if (index === 0) { // A Splitter
+                    let otherIndex = schedule['location_records'].findIndex(record => {
+                        return record['tiploc'] == actvityPoint['tiploc'];
+                    });
+                    let missingRecords = schedule['location_records'].slice(0, otherIndex);
+                    missingRecords.forEach(record => journey.unshift(record));
+                } else { // A Joiner
+                    // let otherIndex = schedule['location_records'].findIndex(record => {
+                    //     return record['tiploc'] == actvityPoint['tiploc'];
+                    // });
+                    // let missingRecords = schedule['location_records'].slice(0, otherIndex);
+                    // journey.unshift(missingRecords);
+                }
+
+                return journey;
+            });
+            
+        }
+        journeys.push(schedule['location_records']);
+        return journeys;
     }
 
     getJourneyOperator(schedule, i) {
@@ -91,20 +132,30 @@ class StationBoard {
 
     }
 
-    getJourneyLocation(record, i) {
-        const recordType = (this.direction == d.ARRIVALS) ?  'LO' : 'LT';
-        const locationKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
+    getJourneyLocation(tiplocList, i) {
+        const boardKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
+        this.board[i][boardKey] = [];
+        tiplocList.forEach((journey, j) => {
+            if(journey !== undefined) {
+                const tiplocs = journey.map(record => {return record['tiploc']});
+                const intersection = this.tiploc.filter(value => -1 !== tiplocs.indexOf(value));
+                if(intersection.length > 0) {
+                    let locationRecord;
+                    if (this.direction == d.ARRIVALS) {
+                        locationRecord = journey.shift();
+                    } else {
+                        locationRecord = journey.pop();
+                    }
 
-        if(record['type'] === recordType) {
-            if (typeof(this.board[i][locationKey]) === 'string') {
-                const currentLocation = this.board[i][locationKey];
-                this.board[i][locationKey] = [currentLocation];
-                this.board[i][locationKey].push(helper.toProperCase(record['location'][0]['name']));
-            } else if (Array.isArray(this.board[i][locationKey])) {
-                this.board[i][locationKey].push(helper.toProperCase(record['location'][0]['name']));
-            } else {
-                this.board[i][locationKey] = helper.toProperCase(record['location'][0]['name']);
+                    if (locationRecord['location']) {
+                        this.board[i][boardKey].push(helper.toProperCase(locationRecord['location'][0]['name']));
+                    }
+                }
             }
+        });
+
+        if (this.board[i][boardKey].length === 1) {
+            this.board[i][boardKey] = this.board[i][boardKey][0];
         }
     }
 
@@ -112,7 +163,7 @@ class StationBoard {
         const publicTimeKey = (this.direction == d.ARRIVALS) ?  'public_arrival' : 'public_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc.includes(recordTiploc) && record[publicTimeKey] !== undefined) {
+        if(this.tiploc.includes(recordTiploc) && record[publicTimeKey] !== undefined && record[publicTimeKey] !== null) {
             this.board[i][publicTimeKey] = record[publicTimeKey];
             this.board[i][publicTimeKey] = DateTime.fromFormat(record[publicTimeKey], 'HH:mm:ss')
                                                         .toFormat('HH:mm');

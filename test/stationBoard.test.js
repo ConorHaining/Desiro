@@ -99,7 +99,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
 
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -115,7 +115,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
 
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -127,7 +127,7 @@ describe('Station Boards', function() {
     describe('Departures', () => {
         
         describe('Destination', () => {
-            it('should contain a single destination', () => {
+            it('should contain a single destination when there is no assoication(s)', () => {
                 const schedules = [
                     {'location_records': [
                         {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
@@ -136,7 +136,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -144,7 +144,7 @@ describe('Station Boards', function() {
                 expect(board[0]['destination']).to.equal('Station 3');
             });
 
-            it('should contain an array of destinations if there is one association', () => {
+            it('should contain two destinations if there is one association and the board is before the split', () => {
                 const schedules = [
                     {'location_records': [
                         {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
@@ -153,7 +153,7 @@ describe('Station Boards', function() {
                         ],
                     'associations': [
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
                             {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
                             ],
@@ -161,7 +161,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['ABCDEF'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -170,7 +170,59 @@ describe('Station Boards', function() {
                 expect(board[0]['destination']).to.have.members(['Station 3', 'Station 5']);
             });
 
-            it('should contain an array of destinations if there is two associations', () => {
+            it('should contain one destination if there is one association and the board is after the split (Train X)', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'LKJGFF', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['LKJGFF'])
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.equal('Station 3');
+            });
+
+            it('should contain one destination if there is one association and the board is after the split (Train Y)', () => {
+                const schedules = [
+                    {'location_records': [
+                        {'tiploc': 'ABCDEF', 'type': 'LO', location: [{'name': 'Station 1'}]},
+                        {'tiploc': 'GHIJKL', 'type': 'LI', location: [{'name': 'Station 2'}]},
+                        {'tiploc': 'LKJGFF', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                        {'tiploc': 'MNOPQU', 'type': 'LT', location: [{'name': 'Station 3'}]},
+                        ],
+                    'associations': [
+                        {'location_records': [
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
+                            ],
+                        },
+                    ]}
+                ];
+    
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['ASDFGH'])
+                              .createBoard();
+    
+                expect(board).have.lengthOf(1);
+                expect(board[0]).to.include.any.keys('destination');
+                expect(board[0]['destination']).to.equal('Station 5');
+            });
+
+            it('should contain an array of destinations if there is two associations and is before the split', () => {
                 const schedules = [
                     {
                         'location_records': [
@@ -180,22 +232,22 @@ describe('Station Boards', function() {
                         ],
                     'associations': [
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
                             {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
                             ],
                         },
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
-                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 6'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 7'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'PNFTWM', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'WMQQBN', 'type': 'LT', location: [{'name': 'Station 7'}]},
                             ],
                         },
                         ]
                     }
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -213,27 +265,27 @@ describe('Station Boards', function() {
                         ],
                     'associations': [
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 4'}]},
                             {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 5'}]},
                             ],
                         },
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
-                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 6'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 7'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'IWNFYW', 'type': 'LI', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'TGFDOQ', 'type': 'LT', location: [{'name': 'Station 7'}]},
                             ],
                         },
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 2'}]},
-                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 8'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 9'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LO', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'PQJVBA', 'type': 'LI', location: [{'name': 'Station 8'}]},
+                            {'tiploc': 'ZMAHQE', 'type': 'LT', location: [{'name': 'Station 9'}]},
                             ],
                         },
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -253,7 +305,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -270,7 +322,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -287,7 +339,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -308,7 +360,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -327,13 +379,13 @@ describe('Station Boards', function() {
                         {'location_records': [
                             {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -352,22 +404,22 @@ describe('Station Boards', function() {
                         ],
                     'associations': [
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
-                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'AYUWEF', 'type': 'LO', location: [{'name': 'Station 4'}]},
+                            {'tiploc': 'KJNHGE', 'type': 'LI', location: [{'name': 'Station 5'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                         {'location_records': [
-                            {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 6'}]},
-                            {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 7'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'XERTBS', 'type': 'LO', location: [{'name': 'Station 6'}]},
+                            {'tiploc': 'DYPUR', 'type': 'LI', location: [{'name': 'Station 7'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                         ]
                     }
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -387,25 +439,25 @@ describe('Station Boards', function() {
                         {'location_records': [
                             {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 4'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 5'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                         {'location_records': [
                             {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 6'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 7'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                         {'location_records': [
                             {'tiploc': 'QWERTY', 'type': 'LO', location: [{'name': 'Station 8'}]},
                             {'tiploc': 'ASDFGH', 'type': 'LI', location: [{'name': 'Station 9'}]},
-                            {'tiploc': 'ZXCVBN', 'type': 'LT', location: [{'name': 'Station 2'}]},
+                            {'tiploc': 'GHIJKL', 'type': 'LT', location: [{'name': 'Station 2'}]},
                             ],
                         },
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -424,7 +476,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -441,7 +493,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -459,7 +511,7 @@ describe('Station Boards', function() {
             ];
 
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -478,7 +530,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -494,7 +546,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                             .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -511,7 +563,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                             .createBoard();
 
             expect(board).have.lengthOf(1);
