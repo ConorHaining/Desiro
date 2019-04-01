@@ -148,7 +148,7 @@ class StationBoard {
                     }
 
                     if (locationRecord['location']) {
-                        this.board[i][boardKey].push(locationRecord['location'][0]['name']);
+                        this.board[i][boardKey].push(helper.toProperCase(locationRecord['location'][0]['name']));
                     }
                 }
             }
