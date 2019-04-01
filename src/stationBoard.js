@@ -163,7 +163,7 @@ class StationBoard {
         const publicTimeKey = (this.direction == d.ARRIVALS) ?  'public_arrival' : 'public_departure';
         const recordTiploc = record['tiploc'];
 
-        if(this.tiploc.includes(recordTiploc) && record[publicTimeKey] !== undefined) {
+        if(this.tiploc.includes(recordTiploc) && record[publicTimeKey] !== undefined && record[publicTimeKey] !== null) {
             this.board[i][publicTimeKey] = record[publicTimeKey];
             this.board[i][publicTimeKey] = DateTime.fromFormat(record[publicTimeKey], 'HH:mm:ss')
                                                         .toFormat('HH:mm');
