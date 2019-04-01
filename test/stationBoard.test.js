@@ -99,7 +99,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
 
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -115,7 +115,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
 
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -136,7 +136,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -161,7 +161,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'ABCDEF')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['ABCDEF'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -188,7 +188,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'LKJGFF')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['LKJGFF'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -214,7 +214,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'ASDFGH')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['ASDFGH'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -247,7 +247,7 @@ describe('Station Boards', function() {
                     }
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -285,7 +285,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -305,7 +305,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -322,7 +322,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -339,7 +339,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -360,7 +360,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -385,7 +385,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -419,7 +419,7 @@ describe('Station Boards', function() {
                     }
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -457,7 +457,7 @@ describe('Station Boards', function() {
                     ]}
                 ];
     
-                const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+                const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                               .createBoard();
     
                 expect(board).have.lengthOf(1);
@@ -476,7 +476,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -493,7 +493,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -511,7 +511,7 @@ describe('Station Boards', function() {
             ];
 
 
-            const board = new StationBoard(schedules, direction.ARRIVALS, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.ARRIVALS, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -530,7 +530,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                           .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -546,7 +546,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                             .createBoard();
 
             expect(board).have.lengthOf(1);
@@ -563,7 +563,7 @@ describe('Station Boards', function() {
                 ]}
             ];
 
-            const board = new StationBoard(schedules, direction.DEPARTURES, 'GHIJKL')
+            const board = new StationBoard(schedules, direction.DEPARTURES, ['GHIJKL'])
                             .createBoard();
 
             expect(board).have.lengthOf(1);
