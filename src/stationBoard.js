@@ -30,8 +30,11 @@ class StationBoard {
     createBoard() {
         this.schedules.forEach((schedule, i) => {
             try {
-                let tiplocList = this.reconstructFullJourney(schedule);
                 this.board.push({});
+                let activityPoint = this.getActivtyPoint(schedule);
+                let tiplocList = this.reconstructFullJourney(schedule, activityPoint);
+                
+                this.getJourneyLocation(tiplocList, activityPoint, i);
 
                 this.getJourneyOperator(schedule, i);
                 this.getJourneyUID(schedule, i);
@@ -47,7 +50,6 @@ class StationBoard {
                     });
                 }
 
-                this.getJourneyLocation(tiplocList, i);
 
             } catch (error) {
                 let err = new Error(`${error.message} | Error for schedule ${schedule['uid']}`);
@@ -59,35 +61,43 @@ class StationBoard {
         return this.board;
     }
 
-    reconstructFullJourney(schedule) {
-        let journeys = [];
-        if(schedule['associations'] !== undefined && schedule['location_records'] !== undefined) {
-            let actvityPoint = {};
+    getActivtyPoint(schedule) {
+        let activityPoint = {};
+        if (schedule['associations'] !== undefined && schedule['location_records'] !== undefined) {
             for (let i = 0; i < schedule['associations'].length; i++) {
                 const association = schedule['associations'][i];
-                journeys.push(association['location_records']);
                 for (let j = 0; j < association['location_records'].length; j++) {
                     const assocRecord = association['location_records'][j];
                     
                     for (let k = 0; k < schedule['location_records'].length; k++) {
                         const record = schedule['location_records'][k];
                         if (record['tiploc'] == assocRecord['tiploc']) {
-                            actvityPoint = record;
+                            activityPoint = record;
                         }
                     }
                 }
             }
+        }
+
+        return activityPoint;
+    }
+    reconstructFullJourney(schedule, activityPoint) {
+        let journeys = [];
+        if(schedule['associations'] !== undefined && schedule['location_records'] !== undefined) {
+            journeys = schedule['associations'].map(assoc => {
+                return assoc['location_records'];
+            });
 
             journeys = journeys.map(journey => {
                 let index = journey.findIndex(record => {
-                    return record['tiploc'] == actvityPoint['tiploc'];
+                    return record['tiploc'] == activityPoint['tiploc'];
                 });
 
                 if (index === 0) { // A Splitter
                     let otherIndex = schedule['location_records'].findIndex(record => {
-                        return record['tiploc'] == actvityPoint['tiploc'];
+                        return record['tiploc'] == activityPoint['tiploc'];
                     });
-                    let missingRecords = schedule['location_records'].slice(0, otherIndex);
+                    let missingRecords = schedule['location_records'].slice(0, otherIndex).reverse();
                     missingRecords.forEach(record => journey.unshift(record));
                 } else { // A Joiner
                     // let otherIndex = schedule['location_records'].findIndex(record => {
@@ -132,10 +142,13 @@ class StationBoard {
 
     }
 
-    getJourneyLocation(tiplocList, i) {
+    getJourneyLocation(tiplocList, activityPoint, i) {
         const boardKey = (this.direction == d.ARRIVALS) ?  'origin' : 'destination';
         this.board[i][boardKey] = [];
-        tiplocList.forEach((journey, j) => {
+
+        for (let j = 0; j < tiplocList.length; j++) {
+            const journey = tiplocList[j];
+            
             if(journey !== undefined) {
                 const tiplocs = journey.map(record => {return record['tiploc']});
                 const intersection = this.tiploc.filter(value => -1 !== tiplocs.indexOf(value));
@@ -150,9 +163,13 @@ class StationBoard {
                     if (locationRecord['location']) {
                         this.board[i][boardKey].push(helper.toProperCase(locationRecord['location'][0]['name']));
                     }
+
+                    if (intersection.includes(activityPoint['tiploc'])){
+                        break;
+                    }
                 }
             }
-        });
+        }
 
         if (this.board[i][boardKey].length === 1) {
             this.board[i][boardKey] = this.board[i][boardKey][0];
