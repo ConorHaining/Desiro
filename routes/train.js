@@ -31,6 +31,7 @@ router.get(
       .then(schedules => movementQuerying.getTrainMovementIdFromSchedules(schedules, when))
       .then(schedules => movementQuerying.getTrainMovementsFromSchedules(schedules, when))
       .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
+      .then(schedules => movementFormatting.calculatePredictedTimeFromSchedules(schedules))
       .then(schedules => scheduleFormatting.createJourneyBoard(schedules))
       .then(schedule => res.send(schedule))
       .catch(err => {console.log(err); res.status(err.status || 500).send(err);});
