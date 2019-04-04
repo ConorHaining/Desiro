@@ -9,6 +9,7 @@ const associationQuerying = require('../src/associationQuerying.js');
 const associationFormatting = require('../src/associationFormatting.js');
 const movementQuerying = require('../src/movementQuerying.js');
 const movementFormatting = require('../src/movementFormatting.js');
+const JourneyBoard = require('../src/JourneyBoard.js');
 
 router.get(
   '/:uid/:year/:month/:day'
@@ -31,8 +32,9 @@ router.get(
       .then(schedules => movementQuerying.getTrainMovementIdFromSchedules(schedules, when))
       .then(schedules => movementQuerying.getTrainMovementsFromSchedules(schedules, when))
       .then(schedules => movementFormatting.performHeuristicsFromSchedules(schedules))
-      .then(schedules => scheduleFormatting.createJourneyBoard(schedules))
-      .then(schedule => res.send(schedule))
+      .then(schedules => movementFormatting.calculatePredictedTimeFromSchedules(schedules))
+      .then(schedules => JourneyBoard.createBoard(schedules[0]))
+      .then(board => res.send(board))
       .catch(err => {console.log(err); res.status(err.status || 500).send(err);});
 
   });
