@@ -36,10 +36,12 @@ class JourneyBoard {
         if (records === undefined) {
             return;
         }
+        
+        let fillMode = false;
 
         locations = records
                     .filter(record => {return record.public_arrival || record.public_departure})
-                    .map(record => {
+                    .map((record, i, allRecords) => {
             let item = {};
 
             item.platform = record.platform;
@@ -54,33 +56,22 @@ class JourneyBoard {
                 item.public_arrival = DateTime.fromFormat(record.public_arrival, 'HH:mm:ss')
                                                 .toFormat('HH:mm');
             }
-
             if (record.public_departure) {
                 item.public_departure = DateTime.fromFormat(record.public_departure, 'HH:mm:ss')
                 .toFormat('HH:mm');
             }
 
             if (record.MVTARRIVAL && record.MVTARRIVAL.actual_timestamp) {
-                item.actual_arrival = DateTime.fromMillis(record.MVTARRIVAL.actual_timestamp).toFormat('HH:mm')
+                item.actual_arrival = DateTime.fromMillis(record.MVTARRIVAL.actual_timestamp).toFormat('HH:mm');
             }
-
             if (record.MVTDEPARTURE && record.MVTDEPARTURE.actual_timestamp) {
-                item.actual_departure = DateTime.fromMillis(record.MVTDEPARTURE.actual_timestamp).toFormat('HH:mm')
+                item.actual_departure = DateTime.fromMillis(record.MVTDEPARTURE.actual_timestamp).toFormat('HH:mm');
             }
 
             if (record.MVTARRIVAL && record.MVTARRIVAL.timetable_variation_prediction && record.predicted_arrival) {
-                item.actual_arrival = record.predicted_arrival;
-            }
-
-            if (record.MVTDEPARTURE && record.MVTDEPARTURE.timetable_variation_prediction && record.predicted_departure) {
-                item.actual_departure = record.predicted_departure;
-            }
-
-            if (record.predicted_arrival && (!record.MVTARRIVAL || !record.MVTARRIVAL.actual_timestamp)) {
                 item.predicted_arrival = record.predicted_arrival;
             }
-
-            if (record.predicted_departure && (!record.MVTDEPARTURE || !record.MVTDEPARTURE.actual_timestamp)) {
+            if (record.MVTDEPARTURE && record.MVTDEPARTURE.timetable_variation_prediction && record.predicted_departure) {
                 item.predicted_departure = record.predicted_departure;
             }
 
@@ -102,7 +93,25 @@ class JourneyBoard {
             
             
             return item;
-        });
+        }).reverse().map(record => {
+            
+            if ((record.actual_arrival || record.actual_departure) && !fillMode) {
+                fillMode = true;
+            } 
+
+            if (record.predicted_arrival && fillMode) {
+                record.actual_arrival = record.predicted_arrival;
+                delete record.predicted_arrival;
+            }
+
+            if (record.predicted_departure && fillMode) {
+                record.actual_departure = record.predicted_departure;
+                delete record.predicted_departure;
+            }
+
+            return record;
+        }).reverse();
+
         
         this.board['locations'] = locations;
     }

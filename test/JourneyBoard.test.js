@@ -788,82 +788,7 @@ describe('Journey Board', function() {
                 expect(board.locations[2]).to.have.any.keys('actual_departure');
                 expect(board.locations[2].actual_departure).to.be.equal('12:09');
             });
-
-            it('the intermediate stations should have an estimated actual arrival and departure time if there is a gap in reporting', async () => {
-                const schedule = {
-                    'location_records': [
-                        {
-                            'public_departure': '12:00:00',
-                            'platform': '1',
-                            'location': [
-                                {
-                                    'crs': 'ABC',
-                                    'name': 'STATION 1'
-                                }
-                            ],
-                            'MVTDEPARTURE': {
-                                'actual_timestamp': 1554202800000
-                            }
-                        },
-                        {
-                            'public_arrival': '12:06:00',
-                            'public_departure': '12:07:00',
-                            'platform': '1',
-                            'location': [
-                                {
-                                    'crs': 'DEF',
-                                    'name': 'STATION 2'
-                                }
-                            ],
-                            'predicted_arrival': '12:06',
-                            'predicted_departure': '12:07',
-                            'MVTDEPARTURE': {
-                                'timetable_variation_prediction': '0'
-                            },
-                            'MVTARRIVAL': {
-                                'timetable_variation_prediction': '0'
-                            },
-                        },
-                        {
-                            'public_arrival': '12:09:00',
-                            'public_departure': '12:10:00',
-                            'platform': '1',
-                            'location': [
-                                {
-                                    'crs': 'GHI',
-                                    'name': 'STATION 3'
-                                }
-                            ],
-                            'predicted_arrival': '12:09',
-                            'predicted_departure': '12:10',
-                            'MVTDEPARTURE': {
-                                'actual_timestamp': 1554203340000
-                            },
-                            'MVTARRIVAL': {
-                                'actual_timestamp': 1554203400000
-                            }
-                        },
-                        {
-                            'public_arrival': '12:20:00',
-                            'platform': '3',
-                            'location': [
-                                {
-                                    'crs': 'XYZ',
-                                    'name': 'STATION 4'
-                                }
-                            ]
-                        },
-                    ]
-                } 
-
-                const board = await JourneyBoard.createBoard(schedule);
-
-                expect(board.locations[1]).to.have.any.keys('actual_departure', 'actual_arrival');
-                expect(board.locations[1].actual_arrival).to.be.equal('12:06');
-                expect(board.locations[1].actual_departure).to.be.equal('12:07');
-
-            });
-    
+            
             it('the terminating station should have a actual arrival if there is a movement', async () => {
                 const schedule = {
                     'location_records': [
@@ -929,6 +854,303 @@ describe('Journey Board', function() {
 
                 expect(board.locations[3]).to.have.any.keys('actual_arrival');
                 expect(board.locations[3].actual_arrival).to.be.equal('12:20');
+            });
+
+            describe('Backfilling Predictions', () => {
+                it('the intermediate stations should have an estimated actual arrival and departure time if there is a single gap in reporting', async () => {
+                    const schedule = {
+                        'location_records': [
+                            {
+                                'public_departure': '12:00:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'ABC',
+                                        'name': 'STATION 1'
+                                    }
+                                ],
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554202800000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:06:00',
+                                'public_departure': '12:07:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'DEF',
+                                        'name': 'STATION 2'
+                                    }
+                                ],
+                                'predicted_arrival': '12:06',
+                                'predicted_departure': '12:07',
+                                'MVTDEPARTURE': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                                'MVTARRIVAL': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                            },
+                            {
+                                'public_arrival': '12:09:00',
+                                'public_departure': '12:10:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'GHI',
+                                        'name': 'STATION 3'
+                                    }
+                                ],
+                                'actual_arrival': '12:09',
+                                'actual_departure': '12:10',
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554203340000
+                                },
+                                'MVTARRIVAL': {
+                                    'actual_timestamp': 1554203400000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:20:00',
+                                'platform': '3',
+                                'location': [
+                                    {
+                                        'crs': 'XYZ',
+                                        'name': 'STATION 4'
+                                    }
+                                ]
+                            },
+                        ]
+                    } 
+    
+                    const board = await JourneyBoard.createBoard(schedule);
+                    
+                    expect(board.locations[1]).to.have.any.keys('actual_departure', 'actual_arrival');
+                    expect(board.locations[1]).to.not.have.any.keys('predicted_departure', 'predicted_arrival');
+                    expect(board.locations[1].actual_arrival).to.be.equal('12:06');
+                    expect(board.locations[1].actual_departure).to.be.equal('12:07');
+    
+                });
+
+                it('the intermediate stations should have an estimated actual arrival and departure time if there is two gaps in reporting', async () => {
+                    const schedule = {
+                        'location_records': [
+                            {
+                                'public_departure': '12:00:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'ABC',
+                                        'name': 'STATION 1'
+                                    }
+                                ],
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554202800000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:06:00',
+                                'public_departure': '12:07:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'DEF',
+                                        'name': 'STATION 2'
+                                    }
+                                ],
+                                'predicted_arrival': '12:06',
+                                'predicted_departure': '12:07',
+                                'MVTDEPARTURE': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                                'MVTARRIVAL': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                            },
+                            {
+                                'public_arrival': '12:09:00',
+                                'public_departure': '12:10:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'GHI',
+                                        'name': 'STATION 3'
+                                    }
+                                ],
+                                'actual_arrival': '12:09',
+                                'actual_departure': '12:10',
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554203340000
+                                },
+                                'MVTARRIVAL': {
+                                    'actual_timestamp': 1554203400000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:06:00',
+                                'public_departure': '12:07:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'DEF',
+                                        'name': 'STATION 4'
+                                    }
+                                ],
+                                'predicted_arrival': '12:06',
+                                'predicted_departure': '12:07',
+                                'MVTDEPARTURE': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                                'MVTARRIVAL': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                            },
+                            {
+                                'public_arrival': '12:09:00',
+                                'public_departure': '12:10:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'GHI',
+                                        'name': 'STATION 5'
+                                    }
+                                ],
+                                'actual_arrival': '12:09',
+                                'actual_departure': '12:10',
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554203340000
+                                },
+                                'MVTARRIVAL': {
+                                    'actual_timestamp': 1554203400000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:20:00',
+                                'platform': '3',
+                                'location': [
+                                    {
+                                        'crs': 'XYZ',
+                                        'name': 'STATION 6'
+                                    }
+                                ]
+                            },
+                        ]
+                    } 
+    
+                    const board = await JourneyBoard.createBoard(schedule);
+                    
+                    expect(board.locations[1]).to.have.any.keys('actual_departure', 'actual_arrival');
+                    expect(board.locations[1]).to.not.have.any.keys('predicted_departure', 'predicted_arrival');
+                    expect(board.locations[1].actual_arrival).to.be.equal('12:06');
+                    expect(board.locations[1].actual_departure).to.be.equal('12:07');
+
+                    expect(board.locations[3]).to.have.any.keys('actual_departure', 'actual_arrival');
+                    expect(board.locations[3]).to.not.have.any.keys('predicted_departure', 'predicted_arrival');
+                    expect(board.locations[3].actual_arrival).to.be.equal('12:06');
+                    expect(board.locations[3].actual_departure).to.be.equal('12:07');
+    
+                });
+
+                it('the intermediate stations should have an estimated actual arrival and departure time if there is a single gap in reporting larger than 1', async () => {
+                    const schedule = {
+                        'location_records': [
+                            {
+                                'public_departure': '12:00:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'ABC',
+                                        'name': 'STATION 1'
+                                    }
+                                ],
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554202800000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:06:00',
+                                'public_departure': '12:07:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'DEF',
+                                        'name': 'STATION 2'
+                                    }
+                                ],
+                                'predicted_arrival': '12:06',
+                                'predicted_departure': '12:07',
+                                'MVTDEPARTURE': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                                'MVTARRIVAL': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                            },
+                            {
+                                'public_arrival': '12:06:00',
+                                'public_departure': '12:07:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'DEF',
+                                        'name': 'STATION 3'
+                                    }
+                                ],
+                                'predicted_arrival': '12:06',
+                                'predicted_departure': '12:07',
+                                'MVTDEPARTURE': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                                'MVTARRIVAL': {
+                                    'timetable_variation_prediction': '0'
+                                },
+                            },
+                            {
+                                'public_arrival': '12:09:00',
+                                'public_departure': '12:10:00',
+                                'platform': '1',
+                                'location': [
+                                    {
+                                        'crs': 'GHI',
+                                        'name': 'STATION 4'
+                                    }
+                                ],
+                                'actual_arrival': '12:09',
+                                'actual_departure': '12:10',
+                                'MVTDEPARTURE': {
+                                    'actual_timestamp': 1554203340000
+                                },
+                                'MVTARRIVAL': {
+                                    'actual_timestamp': 1554203400000
+                                }
+                            },
+                            {
+                                'public_arrival': '12:20:00',
+                                'platform': '3',
+                                'location': [
+                                    {
+                                        'crs': 'XYZ',
+                                        'name': 'STATION 5'
+                                    }
+                                ]
+                            },
+                        ]
+                    } 
+    
+                    const board = await JourneyBoard.createBoard(schedule);
+                    
+                    expect(board.locations[1]).to.have.any.keys('actual_departure', 'actual_arrival');
+                    expect(board.locations[2]).to.not.have.any.keys('predicted_departure', 'predicted_arrival');
+                    expect(board.locations[1].actual_arrival).to.be.equal('12:06');
+                    expect(board.locations[1].actual_departure).to.be.equal('12:07');
+
+                    expect(board.locations[2]).to.have.any.keys('actual_departure', 'actual_arrival');
+                    expect(board.locations[2]).to.not.have.any.keys('predicted_departure', 'predicted_arrival');
+                    expect(board.locations[2].actual_arrival).to.be.equal('12:06');
+                    expect(board.locations[2].actual_departure).to.be.equal('12:07');
+    
+                });
             });
         });
 
